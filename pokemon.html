@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="pokemon.css" />
+    <title>Pokemon | Eksamen</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <!-- http://www.rw-designer.com/cursor-detail/55503 -->
+        <button type="button" id="sort-nav-btn">Sorter:</button>
+        <h1>Pokemon finner app</h1>
+        <button type="button" id="favorites-nav-btn">Favoritter</button>
+      </nav>
+    </header>
+    <main></main>
+    <script>
+      const sortNavBtn = document.querySelector("#sort-nav-btn");
+      const favoritesNavBtn = document.querySelector("#favorites-nav-btn");
+      let allPokemonArray = [];
+
+      sortNavBtn.onclick = initializeAllPokemon();
+      async function getAllPokemons() {
+        const pokemonRequest = await fetch(
+          "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+        );
+        const pokemonResult = await pokemonRequest.json();
+        return pokemonResult.results;
+      }
+
+      async function initializeAllPokemon() {
+        try {
+          allPokemonArray = await getAllPokemons();
+          console.log(allPokemonArray);
+        } catch (error) {
+          console.error("Error med å laste innhold", error);
+        }
+      }
+    </script>
+  </body>
+</html>
