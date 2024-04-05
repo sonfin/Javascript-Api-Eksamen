@@ -21,7 +21,6 @@
       const favoritesNavBtn = document.querySelector("#favorites-nav-btn");
       let uniqueNumersArray = [];
       const unique50Pokemon = [];
-      const apiUrl = "https://pokeapi.co/api/v2/pokemon/";
 
       // Fetch api's
 
@@ -66,17 +65,24 @@
         }
       }
 
+      const pokeApiUrlArray = [];
+      const pokeInfo = [];
+
       async function getPokemonInfo() {
+        uniqueNumersArray.forEach((number) => {
+          const pokemon = allPokemonArray[number];
+          pokeApiUrlArray.push(pokemon.url);
+        });
+
         try {
-          for (const number of uniqueNumersArray) {
-            const response = await fetch(`${apiUrl}${number}/`);
+          for (const url of pokeApiUrlArray) {
+            const response = await fetch(url);
             const pokeInfo = await response.json();
             unique50Pokemon.push(pokeInfo);
-            console.log(pokeInfo);
+            console.log(url, pokeInfo);
           }
-          console.log(unique50Pokemon);
         } catch (error) {
-          console.error("Error med å hente data!", error);
+          console.error("Error med å hente pokemon api:", error);
         }
       }
     </script>
