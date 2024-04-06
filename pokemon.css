@@ -52,6 +52,25 @@ main {
   grid-row-gap: 10px;
   width: 100%;
 }
+.card {
+  background-color: orange;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 250px;
+}
+.card div {
+  display: flex;
+  align-items: center;
+  height: 60px;
+}
+.card div h1:hover {
+  cursor: pointer;
+}
 .container-3 {
   background-color: rgb(0, 0, 110);
   height: 100%;

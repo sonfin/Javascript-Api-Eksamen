@@ -30,7 +30,9 @@
       const sortingGrid = document.querySelector(".sorting-grid");
       const cardGrid = document.querySelector(".card-grid");
 
-      let uniqueNumersArray = [];
+      const emoji = ["🤍", "💖", "❌", "♻", "✍", "✏", "✎"];
+      let allPokemonArray = [];
+      const uniqueNumersArray = [];
       const unique50Pokemon = [];
       const pokeApiUrlArray = [];
       const pokeInfo = [];
@@ -57,10 +59,9 @@
       ];
       // Fetch api's
 
-      let allPokemonArray = [];
       sortNavBtn.onclick = displaySortGrid;
-      /*       sortNavBtn.onclick = initializeAllPokemon;
-       */
+      initializeAllPokemon();
+
       async function getAllPokemons() {
         const pokemonRequest = await fetch(
           "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
@@ -111,6 +112,7 @@
             unique50Pokemon.push(pokeInfo);
             console.log(url, pokeInfo);
           }
+          displayPokemonCards();
         } catch (error) {
           console.error("Error med å hente pokemon api:", error);
         }
@@ -131,9 +133,53 @@
       }
 
       function displayPokemonCards(type) {
+        let cards = "";
         for (let i = 0; i < unique50Pokemon.length; i++) {
           const card = unique50Pokemon[i];
+
+          const pokemonCard = document.createElement("div");
+          cardGrid.appendChild(pokemonCard);
+          pokemonCard.className = "card";
+
+          const cardId = document.createElement("p");
+          pokemonCard.appendChild(cardId);
+          cardId.textContent = `#${card.id}`;
+
+          const cardImage = document.createElement("div");
+          pokemonCard.appendChild(cardImage);
+          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+
+          const cardName = document.createElement("h2");
+          pokemonCard.appendChild(cardName);
+          cardName.textContent = `${card.name}`;
+
+          const cardType = document.createElement("p");
+          pokemonCard.appendChild(cardType);
+          cardType.textContent = `Type: ${card.types[0].type.name}`;
+
+          const cardDiv = document.createElement("div");
+          pokemonCard.appendChild(cardDiv);
+
+          const cardLike = document.createElement("h1");
+          cardDiv.appendChild(cardLike);
+          cardLike.textContent = "🤍";
+          cardLike.addEventListener("click", () => addToLike());
+
+          const cardEdit = document.createElement("h1");
+          cardDiv.appendChild(cardEdit);
+          cardEdit.textContent = "✎";
+          cardEdit.addEventListener("click", () => editCard());
+
+          const cardDelete = document.createElement("h1");
+          cardDiv.appendChild(cardDelete);
+          cardDelete.textContent = "❌";
+          cardDelete.addEventListener("click", () => deleteCard());
         }
+        console.log("#", unique50Pokemon[4].id);
+        console.log("Name:", unique50Pokemon[4].name);
+        console.log("Sprite:", unique50Pokemon[4].sprites.front_default);
+        console.log("Type:", unique50Pokemon[4].types[0].type.name);
+        console.log("Hp:", unique50Pokemon[4].stats[0].base_stat);
       }
 
       function sortByType(type, index) {
