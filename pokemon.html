@@ -15,19 +15,52 @@
         <button type="button" id="favorites-nav-btn">Favoritter</button>
       </nav>
     </header>
-    <main></main>
+    <main>
+      <div class="container-1">
+        <div class="sorting-grid"></div>
+      </div>
+      <div class="container-2">
+        <div class="card-grid"></div>
+      </div>
+      <div class="container-3"></div>
+    </main>
     <script>
       const sortNavBtn = document.querySelector("#sort-nav-btn");
       const favoritesNavBtn = document.querySelector("#favorites-nav-btn");
+      const sortingGrid = document.querySelector(".sorting-grid");
+      const cardGrid = document.querySelector(".card-grid");
+
       let uniqueNumersArray = [];
       const unique50Pokemon = [];
-
+      const pokeApiUrlArray = [];
+      const pokeInfo = [];
+      const typeArray = [
+        "bug",
+        "dark",
+        "dragon",
+        "electric",
+        "fairy",
+        "fighting",
+        "fire",
+        "flying",
+        "ghost",
+        "grass",
+        "ground",
+        "ice",
+        "normal",
+        "poison",
+        "psychic",
+        "rock",
+        "steel",
+        "water",
+        "custom",
+      ];
       // Fetch api's
 
       let allPokemonArray = [];
-
-      sortNavBtn.onclick = initializeAllPokemon;
-
+      sortNavBtn.onclick = displaySortGrid;
+      /*       sortNavBtn.onclick = initializeAllPokemon;
+       */
       async function getAllPokemons() {
         const pokemonRequest = await fetch(
           "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
@@ -65,9 +98,6 @@
         }
       }
 
-      const pokeApiUrlArray = [];
-      const pokeInfo = [];
-
       async function getPokemonInfo() {
         uniqueNumersArray.forEach((number) => {
           const pokemon = allPokemonArray[number];
@@ -84,6 +114,30 @@
         } catch (error) {
           console.error("Error med å hente pokemon api:", error);
         }
+      }
+
+      function displaySortGrid() {
+        while (sortingGrid.firstChild) {
+          sortingGrid.removeChild(sortingGrid.firstChild);
+        }
+        for (let i = 0; i < typeArray.length; i++) {
+          const type = typeArray[i];
+          const typeImage = document.createElement("div");
+          sortingGrid.appendChild(typeImage);
+          typeImage.innerHTML = `<img src="./assets/${type}-48px.png" alt="${type} type" />`;
+          typeImage.id = `type-${type}`;
+          typeImage.addEventListener("click", () => sortByType(type, i));
+        }
+      }
+
+      function displayPokemonCards(type) {
+        for (let i = 0; i < unique50Pokemon.length; i++) {
+          const card = unique50Pokemon[i];
+        }
+      }
+
+      function sortByType(type, index) {
+        console.log(type, index);
       }
     </script>
   </body>
