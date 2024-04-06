@@ -91,8 +91,6 @@
               uniqueNumersArray.push(randomNumber);
             }
           }
-          console.log(uniqueNumersArray);
-          console.log(allPokemonArray);
           getPokemonInfo();
         } catch (error) {
           console.error("Error med å generere unique pokemon", error);
@@ -110,9 +108,9 @@
             const response = await fetch(url);
             const pokeInfo = await response.json();
             unique50Pokemon.push(pokeInfo);
-            console.log(url, pokeInfo);
           }
           displayPokemonCards();
+          typeSorter();
         } catch (error) {
           console.error("Error med å hente pokemon api:", error);
         }
@@ -131,7 +129,7 @@
           typeImage.addEventListener("click", () => sortByType(type, i));
         }
       }
-
+      // Funksjonen kan forkortes.
       function displayPokemonCards(type) {
         let cards = "";
         for (let i = 0; i < unique50Pokemon.length; i++) {
@@ -144,7 +142,7 @@
           const cardId = document.createElement("p");
           pokemonCard.appendChild(cardId);
           cardId.textContent = `#${card.id}`;
-
+          // Det hender at det ikke eksisterer bilde, se om man kan errorhåndtere det.
           const cardImage = document.createElement("div");
           pokemonCard.appendChild(cardImage);
           cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
@@ -174,6 +172,28 @@
           cardDiv.appendChild(cardDelete);
           cardDelete.textContent = "❌";
           cardDelete.addEventListener("click", () => deleteCard());
+        }
+      }
+      const sortArrays = [];
+      const sortTypeArrays = [];
+
+      async function typeSorter() {
+        typeArray.forEach((type) => {
+          const typeApiArray = `https://pokeapi.co/api/v2/type/${type}/`;
+          sortArrays.push(typeApiArray);
+        });
+
+        try {
+          for (let i = 0; i < sortArrays.length - 1; i++) {
+            const url = sortArrays[i];
+            const response = await fetch(url);
+            const typeInfo = await response.json();
+            sortTypeArrays.push(typeInfo);
+          }
+
+          console.log(sortTypeArrays);
+        } catch (error) {
+          console.error("Error med å hente typer:", error);
         }
       }
 
