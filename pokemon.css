@@ -40,7 +40,7 @@ main {
 .container-2 {
   background-color: rgb(110, 110, 0);
   height: 100%;
-  width: 60%;
+  width: 70%;
 }
 .card-grid {
   display: grid;
@@ -74,5 +74,5 @@ main {
 .container-3 {
   background-color: rgb(0, 0, 110);
   height: 100%;
-  width: 25%;
+  width: 15%;
 }

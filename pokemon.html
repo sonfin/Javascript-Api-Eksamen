@@ -36,9 +36,7 @@
       const unique50Pokemon = [];
       const pokeApiUrlArray = [];
       const pokeInfo = [];
-      const sortArrays = [];
-      const sortTypeArrays = [];
-      const pokemonUrlByType = {};
+      let sortedTypeArray = [];
       const typeArray = [
         "bug",
         "dark",
@@ -112,8 +110,10 @@
             const pokeInfo = await response.json();
             unique50Pokemon.push(pokeInfo);
           }
-          displayPokemonCards();
-          typeSorter();
+          displayPokemonCards(unique50Pokemon);
+
+          // Til hvis jeg skal bruke det senere....
+          /* typeSorter(); */
         } catch (error) {
           console.error("Error med å hente pokemon api:", error);
         }
@@ -133,50 +133,92 @@
         }
       }
       // Funksjonen kan forkortes.
+      let sorryArray = {
+        id: 404,
+        sprites: { front_default: "assets/what-happened.png" },
+        name: "Beklager",
+        types: [
+          {
+            slot: 1,
+            type: {
+              name: "Ingen pokemon her!",
+            },
+          },
+        ],
+      };
+
       function displayPokemonCards(type) {
-        let cards = "";
-        for (let i = 0; i < unique50Pokemon.length; i++) {
-          const card = unique50Pokemon[i];
+        while (cardGrid.firstChild) {
+          cardGrid.removeChild(cardGrid.firstChild);
+        }
+        if (type.length <= 1) {
+          console.log("test");
 
-          const pokemonCard = document.createElement("div");
-          cardGrid.appendChild(pokemonCard);
-          pokemonCard.className = "card";
+          console.log(sorryArray);
+          displayPokemonCards(sorryArray);
+        } else {
+          let cards = "";
+          for (let i = 0; i < type.length; i++) {
+            const card = type[i];
 
-          const cardId = document.createElement("p");
-          pokemonCard.appendChild(cardId);
-          cardId.textContent = `#${card.id}`;
-          // Det hender at det ikke eksisterer bilde, se om man kan errorhåndtere det.
-          const cardImage = document.createElement("div");
-          pokemonCard.appendChild(cardImage);
-          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+            const pokemonCard = document.createElement("div");
+            cardGrid.appendChild(pokemonCard);
+            pokemonCard.className = "card";
 
-          const cardName = document.createElement("h2");
-          pokemonCard.appendChild(cardName);
-          cardName.textContent = `${card.name}`;
+            const cardId = document.createElement("p");
+            pokemonCard.appendChild(cardId);
+            cardId.textContent = `#${card.id}`;
+            // Det hender at det ikke eksisterer bilde, se om man kan errorhåndtere det.
+            const cardImage = document.createElement("div");
+            pokemonCard.appendChild(cardImage);
+            cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
 
-          const cardType = document.createElement("p");
-          pokemonCard.appendChild(cardType);
-          cardType.textContent = `Type: ${card.types[0].type.name}`;
+            const cardName = document.createElement("h2");
+            pokemonCard.appendChild(cardName);
+            cardName.textContent = `${card.name}`;
 
-          const cardDiv = document.createElement("div");
-          pokemonCard.appendChild(cardDiv);
+            const cardType = document.createElement("p");
+            pokemonCard.appendChild(cardType);
+            cardType.textContent = `Type: ${card.types[0].type.name}`;
 
-          const cardLike = document.createElement("h1");
-          cardDiv.appendChild(cardLike);
-          cardLike.textContent = "🤍";
-          cardLike.addEventListener("click", () => addToLike());
+            const cardDiv = document.createElement("div");
+            pokemonCard.appendChild(cardDiv);
 
-          const cardEdit = document.createElement("h1");
-          cardDiv.appendChild(cardEdit);
-          cardEdit.textContent = "✎";
-          cardEdit.addEventListener("click", () => editCard());
+            const cardLike = document.createElement("h1");
+            cardDiv.appendChild(cardLike);
+            cardLike.textContent = "🤍";
+            cardLike.addEventListener("click", () => addToLike());
 
-          const cardDelete = document.createElement("h1");
-          cardDiv.appendChild(cardDelete);
-          cardDelete.textContent = "❌";
-          cardDelete.addEventListener("click", () => deleteCard());
+            const cardEdit = document.createElement("h1");
+            cardDiv.appendChild(cardEdit);
+            cardEdit.textContent = "✎";
+            cardEdit.addEventListener("click", () => editCard());
+
+            const cardDelete = document.createElement("h1");
+            cardDiv.appendChild(cardDelete);
+            cardDelete.textContent = "❌";
+            cardDelete.addEventListener("click", () => deleteCard());
+          }
         }
       }
+      sortedTypeArray;
+      function sortByType(type, index) {
+        console.log(type, index);
+
+        let sortedTypeArray = unique50Pokemon.filter(
+          (pokemon) => pokemon.types[0].type.name === type
+        );
+
+        displayPokemonCards(sortedTypeArray);
+      }
+
+      // Tolket oppgave 1.2 feil først og lagde kode for å hente inn alle pokemons som finnes av alle de forskjellige typene.
+
+      /*
+
+      const sortArrays = [];
+      const sortTypeArrays = [];
+      const pokemonUrlByType = {};
 
       async function typeSorter() {
         typeArray.forEach((type) => {
@@ -214,7 +256,23 @@
 
       function sortByType(type, index) {
         console.log(type, index);
-      }
+        const typeUrl = pokemonUrlByType;
+        const typePokemonArray = [];
+        async function getTypeApi() {
+          try {
+            for (const url of typeUrl[type]) {
+              const response = await fetch(url);
+              const pokeInfo = await response.json();
+              typePokemonArray.push(pokeInfo);
+            }
+          } catch (error) {
+            console.error("Error med å hente typeArray", error);
+          }
+          console.log(typePokemonArray);
+          displayPokemonCards(typePokemonArray);
+        }
+        getTypeApi();
+      } */
     </script>
   </body>
 </html>
