@@ -37,6 +37,9 @@ main {
   grid-row-gap: 10px;
   width: 100%;
 }
+.sorting-grid img:hover {
+  cursor: pointer;
+}
 .container-2 {
   background-color: rgb(110, 110, 0);
   height: 100%;
@@ -62,6 +65,10 @@ main {
   text-align: center;
   width: 100%;
   height: 250px;
+}
+.card img {
+  width: 96px;
+  height: 96px;
 }
 .card div {
   display: flex;

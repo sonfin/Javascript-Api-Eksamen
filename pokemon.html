@@ -133,27 +133,40 @@
         }
       }
       // Funksjonen kan forkortes.
-      let sorryArray = {
-        id: 404,
-        sprites: { front_default: "assets/what-happened.png" },
-        name: "Beklager",
-        types: [
-          {
-            slot: 1,
-            type: {
-              name: "Ingen pokemon her!",
+      let sorryArray = [
+        {
+          id: 404,
+          sprites: { front_default: "assets/what-happened.png" },
+          name: "Beklager",
+          types: [
+            {
+              slot: 1,
+              type: {
+                name: "Ingen pokemon her!",
+              },
             },
-          },
-        ],
-      };
+          ],
+        },
+        {
+          id: 404,
+          sprites: { front_default: "assets/what-happened.png" },
+          name: "Lage en?",
+          types: [
+            {
+              slot: 1,
+              type: {
+                name: "Trykk på (Lag Pokemon!)",
+              },
+            },
+          ],
+        },
+      ];
 
       function displayPokemonCards(type) {
         while (cardGrid.firstChild) {
           cardGrid.removeChild(cardGrid.firstChild);
         }
         if (type.length <= 1) {
-          console.log("test");
-
           console.log(sorryArray);
           displayPokemonCards(sorryArray);
         } else {
