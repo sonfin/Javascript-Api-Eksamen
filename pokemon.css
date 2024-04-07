@@ -23,7 +23,6 @@ main {
 .container-1 {
   display: flex;
   justify-content: space-evenly;
-  background-color: rgb(98, 0, 0);
   height: 100%;
   width: 15%;
 }
@@ -31,17 +30,16 @@ main {
   display: grid;
   align-items: center;
   justify-items: center;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(10, 1fr);
   grid-column-gap: 10px;
   grid-row-gap: 10px;
-  width: 100%;
+  width: fit-content;
 }
 .sorting-grid img:hover {
   cursor: pointer;
 }
 .container-2 {
-  background-color: rgb(110, 110, 0);
   height: 100%;
   width: 70%;
 }
