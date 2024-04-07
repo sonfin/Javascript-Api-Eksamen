@@ -36,6 +36,9 @@
       const unique50Pokemon = [];
       const pokeApiUrlArray = [];
       const pokeInfo = [];
+      const sortArrays = [];
+      const sortTypeArrays = [];
+      const pokemonUrlByType = {};
       const typeArray = [
         "bug",
         "dark",
@@ -174,8 +177,6 @@
           cardDelete.addEventListener("click", () => deleteCard());
         }
       }
-      const sortArrays = [];
-      const sortTypeArrays = [];
 
       async function typeSorter() {
         typeArray.forEach((type) => {
@@ -191,9 +192,23 @@
             sortTypeArrays.push(typeInfo);
           }
 
-          console.log(sortTypeArrays);
+          // Hjelp fra chatGpt
+
+          for (let i = 0; i < sortTypeArrays.length; i++) {
+            const typeObject = sortTypeArrays[i];
+
+            for (let j = 0; j < typeObject.pokemon.length; j++) {
+              const typePokemon = typeObject.pokemon[j];
+
+              if (!pokemonUrlByType.hasOwnProperty(typeObject.name)) {
+                pokemonUrlByType[typeObject.name] = [];
+              }
+              pokemonUrlByType[typeObject.name].push(typePokemon.pokemon.url);
+            }
+          }
+          console.log(pokemonUrlByType);
         } catch (error) {
-          console.error("Error med å hente typer:", error);
+          console.error(error);
         }
       }
 
