@@ -19,11 +19,11 @@ h1 {
 main {
   height: 85vh;
   display: flex;
+  margin: 10px;
 }
 .container-1 {
   display: flex;
   justify-content: space-evenly;
-  background-color: rgb(98, 0, 0);
   height: 100%;
   width: 15%;
 }
@@ -31,16 +31,18 @@ main {
   display: grid;
   align-items: center;
   justify-items: center;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(10, 1fr);
   grid-column-gap: 10px;
   grid-row-gap: 10px;
-  width: 100%;
+  width: fit-content;
+}
+.sorting-grid img:hover {
+  cursor: pointer;
 }
 .container-2 {
-  background-color: rgb(110, 110, 0);
   height: 100%;
-  width: 60%;
+  width: 70%;
 }
 .card-grid {
   display: grid;
@@ -63,6 +65,10 @@ main {
   width: 100%;
   height: 250px;
 }
+.card img {
+  width: 96px;
+  height: 96px;
+}
 .card div {
   display: flex;
   align-items: center;
@@ -74,5 +80,5 @@ main {
 .container-3 {
   background-color: rgb(0, 0, 110);
   height: 100%;
-  width: 25%;
+  width: 15%;
 }
