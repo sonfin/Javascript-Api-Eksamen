@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <nav>
+      <nav class="nav-bar">
         <!-- http://www.rw-designer.com/cursor-detail/55503 -->
         <button type="button" id="sort-nav-btn">Sorter:</button>
         <h1>Pokemon finner app</h1>
@@ -116,7 +116,7 @@
 
       async function getAllPokemons() {
         const pokemonRequest = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+          "https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0"
         );
         const pokemonResult = await pokemonRequest.json();
         return pokemonResult.results;
@@ -198,8 +198,7 @@
           cardGrid.removeChild(cardGrid.firstChild);
         }
         if (type.length <= 1) {
-          console.log(sorryArray);
-          displayPokemonCards(sorryArray);
+          displayPokemonCards(sorryArray, 19);
         } else {
           let cards = "";
           for (let i = 0; i < type.length; i++) {
@@ -249,15 +248,28 @@
       }
       sortedTypeArray;
       function sortByType(type, index) {
-        console.log(type, index);
-
         let sortedTypeArray = unique50Pokemon.filter(
           (pokemon) => pokemon.types[0].type.name === type
         );
-
         displayPokemonCards(sortedTypeArray, index);
+        removeSortButton();
       }
 
+      function removeSortButton() {
+        sortNavBtn.textContent = "Fjern Sortering";
+        sortNavBtn.id = "remove-sorting-btn";
+        const removeSortingBtn = document.querySelector("#remove-sorting-btn");
+        removeSortingBtn.addEventListener("click", () =>
+          resetBtn(removeSortingBtn)
+        );
+      }
+      function resetBtn(removeSortingBtn) {
+        removeSortingBtn.id = "sort-nav-btn";
+        sortNavBtn.textContent = "Sorter:";
+        displayPokemonCards(unique50Pokemon, 19);
+      }
+
+      // Mulig jeg tenkte feil ved fargesortering i oppgave 1.2 Se på senere?
       // Tolket oppgave 1.2 feil først og lagde kode for å hente inn alle pokemons som finnes av alle de forskjellige typene.
 
       /*

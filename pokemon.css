@@ -19,6 +19,7 @@ h1 {
 main {
   height: 85vh;
   display: flex;
+  margin: 10px;
 }
 .container-1 {
   display: flex;
