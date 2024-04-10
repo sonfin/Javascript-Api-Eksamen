@@ -115,6 +115,7 @@
       for (pokemon of localPokemon) {
         customPokemonArray.push(pokemon);
       }
+
       sortNavBtn.onclick = displaySortGrid;
       initializeAllPokemon();
 
@@ -360,14 +361,11 @@
           console.log(`Navn: ${inputNameValue} Type: ${inputTypeValue}`);
           customPokemonArray.push(newPokemon);
           unique50Pokemon.push(newPokemon);
-          /* localStorage.setItem(key, JSON.stringify(customPokemonArray)); */
-
           localStorage.setItem(
             "CustomPokemon",
             JSON.stringify(customPokemonArray)
           );
-
-          displayPokemonCards(unique50Pokemon, 19);
+          displayPokemonCards(unique50Pokemon);
         }
       }
 
