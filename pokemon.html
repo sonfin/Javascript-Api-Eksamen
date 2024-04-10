@@ -59,6 +59,7 @@
         "water",
         "create",
       ];
+      const customPokemonArray = [];
       const colorArray = [
         "#83c300",
         "#5b5466",
@@ -81,6 +82,7 @@
         "#9f0400",
         "#ffa500",
       ];
+
       let sorryArray = [
         {
           id: 404,
@@ -197,10 +199,14 @@
         while (cardGrid.firstChild) {
           cardGrid.removeChild(cardGrid.firstChild);
         }
-        if (type.length <= 1) {
+        if (type.length < 1) {
           displayPokemonCards(sorryArray, 19);
         } else {
           let cards = "";
+          const typeColorMap = {};
+          typeArray.forEach((type, index) => {
+            typeColorMap[type] = colorArray[index];
+          });
           for (let i = 0; i < type.length; i++) {
             const card = type[i];
 
@@ -208,12 +214,16 @@
             cardGrid.appendChild(pokemonCard);
             pokemonCard.className = "card";
 
-            pokemonCard.style.backgroundColor = `${colorArray[index]}`;
+            console.log(typeColorMap[card.types[0].type.name]);
+
+            pokemonCard.style.backgroundColor = `${
+              typeColorMap[card.types[0].type.name]
+            }`;
 
             const cardId = document.createElement("p");
             pokemonCard.appendChild(cardId);
             cardId.textContent = `#${card.id}`;
-            // Det hender at det ikke eksisterer bilde, se om man kan errorhåndtere det.
+
             const cardImage = document.createElement("div");
             pokemonCard.appendChild(cardImage);
             cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
@@ -246,6 +256,7 @@
           }
         }
       }
+
       function sortByType(type, index) {
         if (type === "create") {
           createInputField();
@@ -330,7 +341,26 @@
           const inputNameValue = inputName.value;
           const inputTypeValue = inputType.value;
 
+          const newPokemon = {
+            id: 9999,
+            sprites: { front_default: "assets/custom-pokemon.png" },
+            name: inputNameValue,
+            types: [
+              {
+                slot: 1,
+                type: {
+                  name: inputTypeValue,
+                },
+              },
+            ],
+          };
+
           console.log(`Navn: ${inputNameValue} Type: ${inputTypeValue}`);
+          customPokemonArray.push(newPokemon);
+          unique50Pokemon.push(newPokemon);
+          console.log(customPokemonArray);
+          console.log(unique50Pokemon);
+          displayPokemonCards(unique50Pokemon, 19);
         }
       }
 
