@@ -51,7 +51,7 @@ main {
   grid-column-gap: 5px;
   grid-row-gap: 5px;
   width: 100%;
-  margin-left: 10px;
+  border-right: 10px;
 }
 .card {
   background-color: orange;
@@ -77,7 +77,6 @@ main {
   cursor: pointer;
 }
 .container-3 {
-  background-color: rgb(0, 0, 110);
   height: 100%;
   width: 15%;
 }
@@ -89,6 +88,8 @@ main {
   grid-template-rows: repeat(5, 1fr);
   grid-column-gap: 5px;
   grid-row-gap: 5px;
-  width: 100%;
+  padding: 0 10px;
+  border-left: 5px solid black;
+  width: 90%;
   margin-left: 10px;
 }

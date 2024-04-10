@@ -22,9 +22,7 @@
       <div class="container-2">
         <div class="card-grid"></div>
       </div>
-      <div class="container-3">
-        <div class="favorite-grid"></div>
-      </div>
+      <div class="container-3"></div>
     </main>
     <script>
       const sortNavBtn = document.querySelector("#sort-nav-btn");
@@ -32,7 +30,7 @@
       const sortingGrid = document.querySelector(".sorting-grid");
       const cardGrid = document.querySelector(".card-grid");
       const container2 = document.querySelector(".container-2");
-      const favoriteGrid = document.querySelector(".favorite-grid");
+      const container3 = document.querySelector(".container-3");
 
       const emoji = ["🤍", "💖", "❌", "♻", "✍", "✏", "✎"];
       let allPokemonArray = [];
@@ -399,17 +397,24 @@
           );
           displayFavoriteCards();
         } else {
-          alert("Du har lagret for mange, slett en for å lagre flere.");
+          alert(
+            "Maksgrensen er nådd! Slett en favoritt for å legge til flere!"
+          );
         }
       }
 
       function displayFavoriteCards() {
-        while (favoriteGrid.firstChild) {
-          favoriteGrid.removeChild(favoriteGrid.firstChild);
+        while (container3.firstChild) {
+          container3.removeChild(container3.firstChild);
         }
         if (favoritePokemonArray.length < 1) {
           alert("Du har ingen favoritter lagret!");
         } else {
+          const favoriteGrid = document.createElement("div");
+          container3.appendChild(favoriteGrid);
+
+          favoriteGrid.className = "favorite-grid";
+
           for (let i = 0; i < favoritePokemonArray.length; i++) {
             const card = favoritePokemonArray[i];
             const pokemonCard = document.createElement("div");
@@ -451,7 +456,9 @@
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
-            cardDelete.addEventListener("click", () => deleteCard(card));
+            cardDelete.addEventListener("click", () =>
+              deleteCard(card, "Favorite")
+            );
           }
         }
       }
