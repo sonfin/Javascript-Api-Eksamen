@@ -29,6 +29,7 @@
       const favoritesNavBtn = document.querySelector("#favorites-nav-btn");
       const sortingGrid = document.querySelector(".sorting-grid");
       const cardGrid = document.querySelector(".card-grid");
+      const container2 = document.querySelector(".container-2");
 
       const emoji = ["🤍", "💖", "❌", "♻", "✍", "✏", "✎"];
       let allPokemonArray = [];
@@ -56,7 +57,6 @@
         "rock",
         "steel",
         "water",
-        "custom",
         "create",
       ];
       const colorArray = [
@@ -103,7 +103,7 @@
             {
               slot: 1,
               type: {
-                name: "Trykk på (Create bildet!)",
+                name: "Trykk på (Create!)",
               },
             },
           ],
@@ -246,13 +246,16 @@
           }
         }
       }
-      sortedTypeArray;
       function sortByType(type, index) {
-        let sortedTypeArray = unique50Pokemon.filter(
-          (pokemon) => pokemon.types[0].type.name === type
-        );
-        displayPokemonCards(sortedTypeArray, index);
-        removeSortButton();
+        if (type === "create") {
+          createInputField();
+        } else {
+          let sortedTypeArray = unique50Pokemon.filter(
+            (pokemon) => pokemon.types[0].type.name === type
+          );
+          displayPokemonCards(sortedTypeArray, index);
+          removeSortButton();
+        }
       }
 
       function removeSortButton() {
@@ -269,68 +272,130 @@
         displayPokemonCards(unique50Pokemon, 19);
       }
 
+      function createInputField() {
+        const screenCover = document.createElement("div");
+        screenCover.style.position = "fixed";
+        screenCover.style.left = "0";
+        screenCover.style.top = "0";
+        screenCover.style.width = "100%";
+        screenCover.style.height = "100%";
+        screenCover.style.backgroundColor = "rgba(0,0,0,0.5)";
+
+        const inputDiv = document.createElement("div");
+        inputDiv.style.backgroundColor = "#fefefe";
+        inputDiv.style.margin = "15% auto";
+        inputDiv.style.padding = "20px";
+        inputDiv.style.border = "1px solid #888";
+        inputDiv.style.width = "50%";
+
+        const closeBtn = document.createElement("span");
+        closeBtn.innerHTML = "❌";
+        closeBtn.style.float = "right";
+        closeBtn.style.fontSize = "1.5rem";
+        closeBtn.style.cursor = "pointer";
+        closeBtn.onclick = function () {
+          screenCover.style.display = "none";
+        };
+
+        const submitBtn = document.createElement("button");
+        submitBtn.textContent = "Lagre";
+        submitBtn.style.backgroundColor = "blue";
+        submitBtn.style.color = "white";
+        submitBtn.style.padding = "10px";
+        submitBtn.style.border = "none";
+        submitBtn.style.borderRadius = "5px";
+        submitBtn.style.cursor = "pointer";
+        submitBtn.addEventListener("click", () => submitPokemon());
+
+        const inputName = document.createElement("input");
+        inputName.placeholder = "f.eks. Pokemon";
+        inputName.id = "pokemon-name";
+
+        const inputType = document.createElement("select");
+        for (let i = 0; i < typeArray.length - 1; i++) {
+          const type = document.createElement("option");
+          type.textContent = typeArray[i];
+          inputType.appendChild(type);
+        }
+
+        inputDiv.appendChild(inputName);
+        inputDiv.appendChild(inputType);
+        inputDiv.appendChild(submitBtn);
+        inputDiv.appendChild(closeBtn);
+        screenCover.appendChild(inputDiv);
+        document.body.appendChild(screenCover);
+
+        function submitPokemon() {
+          screenCover.style.display = "none";
+          const inputNameValue = inputName.value;
+          const inputTypeValue = inputType.value;
+
+          console.log(`Navn: ${inputNameValue} Type: ${inputTypeValue}`);
+        }
+      }
+
       // Mulig jeg tenkte feil ved fargesortering i oppgave 1.2 Se på senere?
       // Tolket oppgave 1.2 feil først og lagde kode for å hente inn alle pokemons som finnes av alle de forskjellige typene.
 
       /*
 
-      const sortArrays = [];
-      const sortTypeArrays = [];
-      const pokemonUrlByType = {};
+                const sortArrays = [];
+                const sortTypeArrays = [];
+                const pokemonUrlByType = {};
 
-      async function typeSorter() {
-        typeArray.forEach((type) => {
-          const typeApiArray = `https://pokeapi.co/api/v2/type/${type}/`;
-          sortArrays.push(typeApiArray);
-        });
+                async function typeSorter() {
+                  typeArray.forEach((type) => {
+                    const typeApiArray = `https://pokeapi.co/api/v2/type/${type}/`;
+                    sortArrays.push(typeApiArray);
+                  });
 
-        try {
-          for (let i = 0; i < sortArrays.length - 1; i++) {
-            const url = sortArrays[i];
-            const response = await fetch(url);
-            const typeInfo = await response.json();
-            sortTypeArrays.push(typeInfo);
-          }
+                  try {
+                    for (let i = 0; i < sortArrays.length - 1; i++) {
+                      const url = sortArrays[i];
+                      const response = await fetch(url);
+                      const typeInfo = await response.json();
+                      sortTypeArrays.push(typeInfo);
+                    }
 
-          // Hjelp fra chatGpt
+                    // Hjelp fra chatGpt
 
-          for (let i = 0; i < sortTypeArrays.length; i++) {
-            const typeObject = sortTypeArrays[i];
+                    for (let i = 0; i < sortTypeArrays.length; i++) {
+                      const typeObject = sortTypeArrays[i];
 
-            for (let j = 0; j < typeObject.pokemon.length; j++) {
-              const typePokemon = typeObject.pokemon[j];
+                      for (let j = 0; j < typeObject.pokemon.length; j++) {
+                        const typePokemon = typeObject.pokemon[j];
 
-              if (!pokemonUrlByType.hasOwnProperty(typeObject.name)) {
-                pokemonUrlByType[typeObject.name] = [];
-              }
-              pokemonUrlByType[typeObject.name].push(typePokemon.pokemon.url);
-            }
-          }
-          console.log(pokemonUrlByType);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+                        if (!pokemonUrlByType.hasOwnProperty(typeObject.name)) {
+                          pokemonUrlByType[typeObject.name] = [];
+                        }
+                        pokemonUrlByType[typeObject.name].push(typePokemon.pokemon.url);
+                      }
+                    }
+                    console.log(pokemonUrlByType);
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
 
-      function sortByType(type, index) {
-        console.log(type, index);
-        const typeUrl = pokemonUrlByType;
-        const typePokemonArray = [];
-        async function getTypeApi() {
-          try {
-            for (const url of typeUrl[type]) {
-              const response = await fetch(url);
-              const pokeInfo = await response.json();
-              typePokemonArray.push(pokeInfo);
-            }
-          } catch (error) {
-            console.error("Error med å hente typeArray", error);
-          }
-          console.log(typePokemonArray);
-          displayPokemonCards(typePokemonArray);
-        }
-        getTypeApi();
-      } */
+                function sortByType(type, index) {
+                  console.log(type, index);
+                  const typeUrl = pokemonUrlByType;
+                  const typePokemonArray = [];
+                  async function getTypeApi() {
+                    try {
+                      for (const url of typeUrl[type]) {
+                        const response = await fetch(url);
+                        const pokeInfo = await response.json();
+                        typePokemonArray.push(pokeInfo);
+                      }
+                    } catch (error) {
+                      console.error("Error med å hente typeArray", error);
+                    }
+                    console.log(typePokemonArray);
+                    displayPokemonCards(typePokemonArray);
+                  }
+                  getTypeApi();
+                } */
     </script>
   </body>
 </html>
