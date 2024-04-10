@@ -59,8 +59,6 @@
         "water",
         "create",
       ];
-      const customPokemonArray = [];
-      const localPokemon = JSON.parse(localStorage.getItem("CustomPokemon"));
       const colorArray = [
         "#83c300",
         "#5b5466",
@@ -111,12 +109,29 @@
           ],
         },
       ];
+      const customPokemonArray = [];
+      const localPokemon = [];
+      const favoritePokemonArray = [];
+      const localFavorite = [];
 
-      for (pokemon of localPokemon) {
-        customPokemonArray.push(pokemon);
+      if (localStorage.length) {
+        const localPokemon = JSON.parse(localStorage.getItem("CustomPokemon"));
+        //errorhåndtering ved ugyldig verdi i localpokemon
+        if (localPokemon) {
+          for (pokemon of localPokemon) {
+            customPokemonArray.push(pokemon);
+          }
+        }
+        const localFavorite = JSON.parse(
+          localStorage.getItem("FavoritePokemon")
+        );
+        for (pokemon of localFavorite) {
+          favoritePokemonArray.push(pokemon);
+        }
       }
 
       sortNavBtn.onclick = displaySortGrid;
+      favoritesNavBtn.onclick = displayFavoriteCards;
       initializeAllPokemon();
 
       async function getAllPokemons() {
@@ -245,17 +260,17 @@
             const cardLike = document.createElement("h1");
             cardDiv.appendChild(cardLike);
             cardLike.textContent = "🤍";
-            cardLike.addEventListener("click", () => addToLike());
+            cardLike.addEventListener("click", () => addToLike(type[i]));
 
             const cardEdit = document.createElement("h1");
             cardDiv.appendChild(cardEdit);
             cardEdit.textContent = "✎";
-            cardEdit.addEventListener("click", () => editCard());
+            cardEdit.addEventListener("click", () => editCard(type[i]));
 
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
-            cardDelete.addEventListener("click", () => deleteCard());
+            cardDelete.addEventListener("click", () => deleteCard(type[i]));
           }
         }
       }
@@ -343,7 +358,6 @@
           screenCover.style.display = "none";
           const inputNameValue = inputName.value;
           const inputTypeValue = inputType.value;
-
           const newPokemon = {
             id: 9999,
             sprites: { front_default: "assets/custom-pokemon.png" },
@@ -369,7 +383,22 @@
         }
       }
 
-      // Mulig jeg tenkte feil ved fargesortering i oppgave 1.2 Se på senere?
+      function addToLike(pokemon) {
+        console.log(favoritePokemonArray);
+        if (favoritePokemonArray.includes(pokemon)) {
+          alert("Du har allerede lagret denne!");
+        } else if (favoritePokemonArray.length <= 4) {
+          favoritePokemonArray.push(pokemon);
+          localStorage.setItem(
+            "FavoritePokemon",
+            JSON.stringify(favoritePokemonArray)
+          );
+        } else {
+          alert("Du har lagret for mange, slett en for å lagre flere.");
+        }
+      }
+
+      function displayFavoriteCards() {}
       // Tolket oppgave 1.2 feil først og lagde kode for å hente inn alle pokemons som finnes av alle de forskjellige typene.
 
       /*
