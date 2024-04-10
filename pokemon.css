@@ -30,11 +30,9 @@ main {
 .sorting-grid {
   display: grid;
   align-items: center;
-  justify-items: center;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
+  grid-column-gap: 5px;
   width: fit-content;
 }
 .sorting-grid img:hover {
@@ -50,9 +48,10 @@ main {
   justify-items: center;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(10, 1fr);
-  grid-column-gap: 10px;
-  grid-row-gap: 10px;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
   width: 100%;
+  margin-left: 10px;
 }
 .card {
   background-color: orange;
