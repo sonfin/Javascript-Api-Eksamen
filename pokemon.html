@@ -22,7 +22,9 @@
       <div class="container-2">
         <div class="card-grid"></div>
       </div>
-      <div class="container-3"></div>
+      <div class="container-3">
+        <div class="favorite-grid"></div>
+      </div>
     </main>
     <script>
       const sortNavBtn = document.querySelector("#sort-nav-btn");
@@ -30,6 +32,7 @@
       const sortingGrid = document.querySelector(".sorting-grid");
       const cardGrid = document.querySelector(".card-grid");
       const container2 = document.querySelector(".container-2");
+      const favoriteGrid = document.querySelector(".favorite-grid");
 
       const emoji = ["🤍", "💖", "❌", "♻", "✍", "✏", "✎"];
       let allPokemonArray = [];
@@ -109,6 +112,7 @@
           ],
         },
       ];
+      const typeColorMap = {};
       const customPokemonArray = [];
       const localPokemon = [];
       const favoritePokemonArray = [];
@@ -116,19 +120,24 @@
 
       if (localStorage.length) {
         const localPokemon = JSON.parse(localStorage.getItem("CustomPokemon"));
-        //errorhåndtering ved ugyldig verdi i localpokemon
+        const localFavorite = JSON.parse(
+          localStorage.getItem("FavoritePokemon")
+        );
+        //errorhåndtering ved ugyldig verdi i localstorage
         if (localPokemon) {
           for (pokemon of localPokemon) {
             customPokemonArray.push(pokemon);
           }
         }
-        const localFavorite = JSON.parse(
-          localStorage.getItem("FavoritePokemon")
-        );
-        for (pokemon of localFavorite) {
-          favoritePokemonArray.push(pokemon);
+        if (localFavorite) {
+          for (pokemon of localFavorite) {
+            favoritePokemonArray.push(pokemon);
+          }
         }
       }
+      typeArray.forEach((type, index) => {
+        typeColorMap[type] = colorArray[index];
+      });
 
       sortNavBtn.onclick = displaySortGrid;
       favoritesNavBtn.onclick = displayFavoriteCards;
@@ -181,13 +190,10 @@
             const pokeInfo = await response.json();
             unique50Pokemon.push(pokeInfo);
           }
-          for (pokemon of localPokemon) {
+          for (pokemon of customPokemonArray) {
             unique50Pokemon.push(pokemon);
           }
           displayPokemonCards(unique50Pokemon);
-
-          // Til hvis jeg skal bruke det senere....
-          /* typeSorter(); */
         } catch (error) {
           console.error("Error med å hente pokemon api:", error);
         }
@@ -223,11 +229,6 @@
         if (type.length < 1) {
           displayPokemonCards(sorryArray, 19);
         } else {
-          let cards = "";
-          const typeColorMap = {};
-          typeArray.forEach((type, index) => {
-            typeColorMap[type] = colorArray[index];
-          });
           for (let i = 0; i < type.length; i++) {
             const card = type[i];
 
@@ -260,17 +261,17 @@
             const cardLike = document.createElement("h1");
             cardDiv.appendChild(cardLike);
             cardLike.textContent = "🤍";
-            cardLike.addEventListener("click", () => addToLike(type[i]));
+            cardLike.addEventListener("click", () => addToLike(card));
 
             const cardEdit = document.createElement("h1");
             cardDiv.appendChild(cardEdit);
             cardEdit.textContent = "✎";
-            cardEdit.addEventListener("click", () => editCard(type[i]));
+            cardEdit.addEventListener("click", () => editCard(card));
 
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
-            cardDelete.addEventListener("click", () => deleteCard(type[i]));
+            cardDelete.addEventListener("click", () => deleteCard(card));
           }
         }
       }
@@ -315,7 +316,8 @@
         inputDiv.style.margin = "15% auto";
         inputDiv.style.padding = "20px";
         inputDiv.style.border = "1px solid #888";
-        inputDiv.style.width = "50%";
+        inputDiv.style.borderRadius = "10px";
+        inputDiv.style.width = "450px";
 
         const closeBtn = document.createElement("span");
         closeBtn.innerHTML = "❌";
@@ -334,6 +336,7 @@
         submitBtn.style.border = "none";
         submitBtn.style.borderRadius = "5px";
         submitBtn.style.cursor = "pointer";
+        submitBtn.style.margin = "10px";
         submitBtn.addEventListener("click", () => submitPokemon());
 
         const inputName = document.createElement("input");
@@ -344,6 +347,7 @@
         for (let i = 0; i < typeArray.length - 1; i++) {
           const type = document.createElement("option");
           type.textContent = typeArray[i];
+          inputType.style.margin = "10px";
           inputType.appendChild(type);
         }
 
@@ -393,12 +397,65 @@
             "FavoritePokemon",
             JSON.stringify(favoritePokemonArray)
           );
+          displayFavoriteCards();
         } else {
           alert("Du har lagret for mange, slett en for å lagre flere.");
         }
       }
 
-      function displayFavoriteCards() {}
+      function displayFavoriteCards() {
+        while (favoriteGrid.firstChild) {
+          favoriteGrid.removeChild(favoriteGrid.firstChild);
+        }
+        if (favoritePokemonArray.length < 1) {
+          alert("Du har ingen favoritter lagret!");
+        } else {
+          for (let i = 0; i < favoritePokemonArray.length; i++) {
+            const card = favoritePokemonArray[i];
+            const pokemonCard = document.createElement("div");
+            favoriteGrid.appendChild(pokemonCard);
+            pokemonCard.className = "card";
+            pokemonCard.style.backgroundColor = `${
+              typeColorMap[card.types[0].type.name]
+            }`;
+
+            const cardId = document.createElement("p");
+            pokemonCard.appendChild(cardId);
+            cardId.textContent = `#${card.id}`;
+
+            const cardImage = document.createElement("div");
+            pokemonCard.appendChild(cardImage);
+            cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+
+            const cardName = document.createElement("h2");
+            pokemonCard.appendChild(cardName);
+            cardName.textContent = `${card.name}`;
+
+            const cardType = document.createElement("p");
+            pokemonCard.appendChild(cardType);
+            cardType.textContent = `Type: ${card.types[0].type.name}`;
+
+            const cardDiv = document.createElement("div");
+            pokemonCard.appendChild(cardDiv);
+
+            const cardLike = document.createElement("h1");
+            cardDiv.appendChild(cardLike);
+            cardLike.textContent = "🤍";
+            cardLike.addEventListener("click", () => addToLike(card));
+
+            const cardEdit = document.createElement("h1");
+            cardDiv.appendChild(cardEdit);
+            cardEdit.textContent = "✎";
+            cardEdit.addEventListener("click", () => editCard(card));
+
+            const cardDelete = document.createElement("h1");
+            cardDiv.appendChild(cardDelete);
+            cardDelete.textContent = "❌";
+            cardDelete.addEventListener("click", () => deleteCard(card));
+          }
+        }
+      }
+
       // Tolket oppgave 1.2 feil først og lagde kode for å hente inn alle pokemons som finnes av alle de forskjellige typene.
 
       /*
