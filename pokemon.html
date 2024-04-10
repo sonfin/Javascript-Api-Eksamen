@@ -60,6 +60,7 @@
         "create",
       ];
       const customPokemonArray = [];
+      const localPokemon = JSON.parse(localStorage.getItem("CustomPokemon"));
       const colorArray = [
         "#83c300",
         "#5b5466",
@@ -82,7 +83,6 @@
         "#9f0400",
         "#ffa500",
       ];
-
       let sorryArray = [
         {
           id: 404,
@@ -111,8 +111,10 @@
           ],
         },
       ];
-      // Fetch api's
 
+      for (pokemon of localPokemon) {
+        customPokemonArray.push(pokemon);
+      }
       sortNavBtn.onclick = displaySortGrid;
       initializeAllPokemon();
 
@@ -163,7 +165,10 @@
             const pokeInfo = await response.json();
             unique50Pokemon.push(pokeInfo);
           }
-          displayPokemonCards(unique50Pokemon, 19);
+          for (pokemon of localPokemon) {
+            unique50Pokemon.push(pokemon);
+          }
+          displayPokemonCards(unique50Pokemon);
 
           // Til hvis jeg skal bruke det senere....
           /* typeSorter(); */
@@ -213,9 +218,6 @@
             const pokemonCard = document.createElement("div");
             cardGrid.appendChild(pokemonCard);
             pokemonCard.className = "card";
-
-            console.log(typeColorMap[card.types[0].type.name]);
-
             pokemonCard.style.backgroundColor = `${
               typeColorMap[card.types[0].type.name]
             }`;
@@ -358,8 +360,13 @@
           console.log(`Navn: ${inputNameValue} Type: ${inputTypeValue}`);
           customPokemonArray.push(newPokemon);
           unique50Pokemon.push(newPokemon);
-          console.log(customPokemonArray);
-          console.log(unique50Pokemon);
+          /* localStorage.setItem(key, JSON.stringify(customPokemonArray)); */
+
+          localStorage.setItem(
+            "CustomPokemon",
+            JSON.stringify(customPokemonArray)
+          );
+
           displayPokemonCards(unique50Pokemon, 19);
         }
       }
