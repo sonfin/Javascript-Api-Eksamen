@@ -412,6 +412,31 @@
           inputDiv.appendChild(closeBtn);
           screenCover.appendChild(inputDiv);
           document.body.appendChild(screenCover);
+
+          function savePokemon() {
+            if (
+              favoritePokemonArray.includes(pokemon) &&
+              customPokemonArray.includes(pokemon)
+            ) {
+              console.log("favorite & custom");
+            } else if (
+              favoritePokemonArray.includes(pokemon) &&
+              unique50Pokemon.includes(pokemon)
+            ) {
+              console.log("favorite & unique50");
+            } else if (
+              customPokemonArray.includes(pokemon) &&
+              unique50Pokemon.includes(pokemon)
+            ) {
+              console.log("custom & unique50");
+              /*               unique50Pokemon.splice()
+               */
+            } else if (favoritePokemonArray.includes(pokemon)) {
+              console.log("favorite");
+            } else {
+              console.log("unique50");
+            }
+          }
         }
       }
 
@@ -435,7 +460,7 @@
       function editCard(pokemon) {
         createInputField("Edit", pokemon);
 
-        if (favoritePokemonArray.includes(pokemon)) {
+        /*  if (favoritePokemonArray.includes(pokemon)) {
           const index = favoritePokemonArray.indexOf(pokemon);
           favoritePokemonArray.splice(index, 1, editPokemon);
 
@@ -444,7 +469,7 @@
             JSON.stringify(favoritePokemonArray)
           );
           displayFavoriteCards();
-        }
+        } */
       }
 
       function deleteCard(pokemon, location) {
