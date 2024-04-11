@@ -21,6 +21,13 @@ main {
   display: flex;
   margin: 10px;
 }
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  text-decoration: underline;
+}
 .container-1 {
   display: flex;
   justify-content: space-evenly;
