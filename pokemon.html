@@ -32,7 +32,6 @@
       const container2 = document.querySelector(".container-2");
       const container3 = document.querySelector(".container-3");
 
-      const emoji = ["🤍", "💖", "❌", "♻", "✍", "✏", "✎"];
       let allPokemonArray = [];
       const uniqueNumersArray = [];
       const unique50Pokemon = [];
@@ -278,7 +277,7 @@
 
       function sortByType(type, index) {
         if (type === "create") {
-          createInputField();
+          createInputField("Create");
         } else {
           let sortedTypeArray = unique50Pokemon.filter(
             (pokemon) => pokemon.types[0].type.name === type
@@ -302,7 +301,7 @@
         displayPokemonCards(unique50Pokemon, 19);
       }
 
-      function createInputField() {
+      function createInputField(location) {
         const screenCover = document.createElement("div");
         screenCover.style.position = "fixed";
         screenCover.style.left = "0";
@@ -328,60 +327,88 @@
           screenCover.style.display = "none";
         };
 
-        const submitBtn = document.createElement("button");
-        submitBtn.textContent = "Lagre";
-        submitBtn.style.backgroundColor = "blue";
-        submitBtn.style.color = "white";
-        submitBtn.style.padding = "10px";
-        submitBtn.style.border = "none";
-        submitBtn.style.borderRadius = "5px";
-        submitBtn.style.cursor = "pointer";
-        submitBtn.style.margin = "10px";
-        submitBtn.addEventListener("click", () => submitPokemon());
+        if (location === "Create") {
+          const submitBtn = document.createElement("button");
+          submitBtn.textContent = "Lagre";
+          submitBtn.style.backgroundColor = "blue";
+          submitBtn.style.color = "white";
+          submitBtn.style.padding = "10px";
+          submitBtn.style.border = "none";
+          submitBtn.style.borderRadius = "5px";
+          submitBtn.style.cursor = "pointer";
+          submitBtn.style.margin = "10px";
+          submitBtn.addEventListener("click", () => submitPokemon());
 
-        const inputName = document.createElement("input");
-        inputName.placeholder = "f.eks. Pokemon";
-        inputName.id = "pokemon-name";
+          const inputName = document.createElement("input");
+          inputName.placeholder = "f.eks. Pokemon";
 
-        const inputType = document.createElement("select");
-        for (let i = 0; i < typeArray.length - 1; i++) {
-          const type = document.createElement("option");
-          type.textContent = typeArray[i];
-          inputType.style.margin = "10px";
-          inputType.appendChild(type);
-        }
+          const inputType = document.createElement("select");
+          for (let i = 0; i < typeArray.length - 1; i++) {
+            const type = document.createElement("option");
+            type.textContent = typeArray[i];
+            inputType.style.margin = "10px";
+            inputType.appendChild(type);
+          }
 
-        inputDiv.appendChild(inputName);
-        inputDiv.appendChild(inputType);
-        inputDiv.appendChild(submitBtn);
-        inputDiv.appendChild(closeBtn);
-        screenCover.appendChild(inputDiv);
-        document.body.appendChild(screenCover);
+          inputDiv.appendChild(inputName);
+          inputDiv.appendChild(inputType);
+          inputDiv.appendChild(submitBtn);
+          inputDiv.appendChild(closeBtn);
+          screenCover.appendChild(inputDiv);
+          document.body.appendChild(screenCover);
 
-        function submitPokemon() {
-          screenCover.style.display = "none";
-          const inputNameValue = inputName.value;
-          const inputTypeValue = inputType.value;
-          const newPokemon = {
-            id: 9999,
-            sprites: { front_default: "assets/custom-pokemon.png" },
-            name: inputNameValue,
-            types: [
-              {
-                slot: 1,
-                type: {
-                  name: inputTypeValue,
+          function submitPokemon() {
+            screenCover.style.display = "none";
+            const inputNameValue = inputName.value;
+            const inputTypeValue = inputType.value;
+            const newPokemon = {
+              id: 9999,
+              sprites: { front_default: "assets/custom-pokemon.png" },
+              name: inputNameValue,
+              types: [
+                {
+                  slot: 1,
+                  type: {
+                    name: inputTypeValue,
+                  },
                 },
-              },
-            ],
-          };
-          customPokemonArray.push(newPokemon);
-          unique50Pokemon.push(newPokemon);
-          localStorage.setItem(
-            "CustomPokemon",
-            JSON.stringify(customPokemonArray)
-          );
-          displayPokemonCards(unique50Pokemon);
+              ],
+            };
+            customPokemonArray.push(newPokemon);
+            unique50Pokemon.push(newPokemon);
+            localStorage.setItem(
+              "CustomPokemon",
+              JSON.stringify(customPokemonArray)
+            );
+            displayPokemonCards(unique50Pokemon);
+          }
+        } else if (location === "Edit") {
+          const saveBtn = document.createElement("button");
+          saveBtn.textContent = "Lagre endringer";
+          saveBtn.style.backgroundColor = "blue";
+          saveBtn.style.color = "white";
+          saveBtn.style.padding = "10px";
+          saveBtn.style.border = "none";
+          saveBtn.style.borderRadius = "5px";
+          saveBtn.style.cursor = "pointer";
+          saveBtn.style.margin = "10px";
+          saveBtn.addEventListener("click", () => savePokemon());
+
+          const newName = document.createElement("input");
+          newName.placeholder = "f.eks. Pokemon";
+
+          const inputType = document.createElement("select");
+          for (let i = 0; i < typeArray.length - 1; i++) {
+            const type = document.createElement("option");
+            type.textContent = typeArray[i];
+            inputType.style.margin = "10px";
+            inputType.appendChild(type);
+          }
+
+          inputDiv.appendChild(saveBtn);
+          inputDiv.appendChild(closeBtn);
+          screenCover.appendChild(inputDiv);
+          document.body.appendChild(screenCover);
         }
       }
 
@@ -399,6 +426,21 @@
           alert(
             "Maksgrensen er nådd! Slett en favoritt for å legge til flere!"
           );
+        }
+      }
+
+      function editCard(pokemon) {
+        createInputField("Edit");
+
+        if (favoritePokemonArray.includes(pokemon)) {
+          const index = favoritePokemonArray.indexOf(pokemon);
+          favoritePokemonArray.splice(index, 1, editPokemon);
+
+          localStorage.setItem(
+            "FavoritePokemon",
+            JSON.stringify(favoritePokemonArray)
+          );
+          displayFavoriteCards();
         }
       }
 
