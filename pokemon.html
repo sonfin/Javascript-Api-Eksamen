@@ -301,7 +301,7 @@
         displayPokemonCards(unique50Pokemon, 19);
       }
 
-      function createInputField(location) {
+      function createInputField(location, pokemon) {
         const screenCover = document.createElement("div");
         screenCover.style.position = "fixed";
         screenCover.style.left = "0";
@@ -395,16 +395,19 @@
           saveBtn.addEventListener("click", () => savePokemon());
 
           const newName = document.createElement("input");
-          newName.placeholder = "f.eks. Pokemon";
+          newName.value = `${pokemon.name}`;
 
-          const inputType = document.createElement("select");
+          // NewType.value finner alle typer bortsett fra water
+          const newType = document.createElement("select");
           for (let i = 0; i < typeArray.length - 1; i++) {
             const type = document.createElement("option");
             type.textContent = typeArray[i];
-            inputType.style.margin = "10px";
-            inputType.appendChild(type);
+            newType.style.margin = "10px";
+            newType.value = `${pokemon.types[0].type.name}`;
+            newType.appendChild(type);
           }
-
+          inputDiv.appendChild(newName);
+          inputDiv.appendChild(newType);
           inputDiv.appendChild(saveBtn);
           inputDiv.appendChild(closeBtn);
           screenCover.appendChild(inputDiv);
@@ -430,7 +433,7 @@
       }
 
       function editCard(pokemon) {
-        createInputField("Edit");
+        createInputField("Edit", pokemon);
 
         if (favoritePokemonArray.includes(pokemon)) {
           const index = favoritePokemonArray.indexOf(pokemon);
