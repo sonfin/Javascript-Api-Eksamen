@@ -147,7 +147,6 @@
         const pokemonResult = await pokemonRequest.json();
         return pokemonResult.results;
       }
-
       async function initializeAllPokemon() {
         try {
           allPokemonArray = await getAllPokemons();
@@ -156,9 +155,6 @@
           console.error("Error med å laste innhold", error);
         }
       }
-
-      // Random 50 pokemons
-
       async function uniquePokemon50() {
         try {
           while (uniqueNumersArray.length < 50) {
@@ -174,7 +170,6 @@
           console.error("Error med å generere unique pokemon", error);
         }
       }
-
       async function getPokemonInfo() {
         uniqueNumersArray.forEach((number) => {
           const pokemon = allPokemonArray[number];
@@ -195,7 +190,6 @@
           console.error("Error med å hente pokemon api:", error);
         }
       }
-
       function displaySortGrid() {
         while (sortingGrid.firstChild) {
           sortingGrid.removeChild(sortingGrid.firstChild);
@@ -210,7 +204,6 @@
           const typeText = document.createElement("p");
           sortingGrid.appendChild(typeText);
           typeText.textContent = `${type}`;
-
           const txt = typeText.textContent;
           const word = txt.split(" ");
           word[0] = word[0].charAt(0).toUpperCase() + word[0].slice(1);
@@ -218,7 +211,6 @@
         }
       }
       // Funksjonen kan forkortes.
-
       function displayPokemonCards(type, index) {
         while (cardGrid.firstChild) {
           cardGrid.removeChild(cardGrid.firstChild);
@@ -228,43 +220,34 @@
         } else {
           for (let i = 0; i < type.length; i++) {
             const card = type[i];
-
             const pokemonCard = document.createElement("div");
             cardGrid.appendChild(pokemonCard);
             pokemonCard.className = "card";
             pokemonCard.style.backgroundColor = `${
               typeColorMap[card.types[0].type.name]
             }`;
-
             const cardId = document.createElement("p");
             pokemonCard.appendChild(cardId);
             cardId.textContent = `#${card.id}`;
-
             const cardImage = document.createElement("div");
             pokemonCard.appendChild(cardImage);
             cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
-
             const cardName = document.createElement("h2");
             pokemonCard.appendChild(cardName);
             cardName.textContent = `${card.name}`;
-
             const cardType = document.createElement("p");
             pokemonCard.appendChild(cardType);
             cardType.textContent = `Type: ${card.types[0].type.name}`;
-
             const cardDiv = document.createElement("div");
             pokemonCard.appendChild(cardDiv);
-
             const cardLike = document.createElement("h1");
             cardDiv.appendChild(cardLike);
             cardLike.textContent = "🤍";
             cardLike.addEventListener("click", () => addToLike(card));
-
             const cardEdit = document.createElement("h1");
             cardDiv.appendChild(cardEdit);
             cardEdit.textContent = "✎";
             cardEdit.addEventListener("click", () => editCard(card));
-
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
@@ -274,7 +257,6 @@
           }
         }
       }
-
       function sortByType(type, index) {
         if (type === "create") {
           createInputField("Create");
@@ -286,7 +268,6 @@
           removeSortButton();
         }
       }
-
       function removeSortButton() {
         sortNavBtn.textContent = "Fjern Sortering";
         sortNavBtn.id = "remove-sorting-btn";
@@ -309,7 +290,6 @@
         screenCover.style.width = "100%";
         screenCover.style.height = "100%";
         screenCover.style.backgroundColor = "rgba(0,0,0,0.5)";
-
         const inputDiv = document.createElement("div");
         inputDiv.style.backgroundColor = "#fefefe";
         inputDiv.style.margin = "15% auto";
@@ -317,7 +297,6 @@
         inputDiv.style.border = "1px solid #888";
         inputDiv.style.borderRadius = "10px";
         inputDiv.style.width = "450px";
-
         const closeBtn = document.createElement("span");
         closeBtn.innerHTML = "❌";
         closeBtn.style.float = "right";
@@ -338,10 +317,8 @@
           submitBtn.style.cursor = "pointer";
           submitBtn.style.margin = "10px";
           submitBtn.addEventListener("click", () => submitPokemon());
-
           const inputName = document.createElement("input");
           inputName.placeholder = "f.eks. Pokemon";
-
           const inputType = document.createElement("select");
           for (let i = 0; i < typeArray.length - 1; i++) {
             const type = document.createElement("option");
@@ -349,14 +326,12 @@
             inputType.style.margin = "10px";
             inputType.appendChild(type);
           }
-
           inputDiv.appendChild(inputName);
           inputDiv.appendChild(inputType);
           inputDiv.appendChild(submitBtn);
           inputDiv.appendChild(closeBtn);
           screenCover.appendChild(inputDiv);
           document.body.appendChild(screenCover);
-
           function submitPokemon() {
             screenCover.style.display = "none";
             const inputNameValue = inputName.value;
@@ -393,10 +368,8 @@
           saveBtn.style.cursor = "pointer";
           saveBtn.style.margin = "10px";
           saveBtn.addEventListener("click", () => savePokemon());
-
           const newName = document.createElement("input");
           newName.value = `${pokemon.name}`;
-
           // NewType.value finner alle typer bortsett fra water
           const newType = document.createElement("select");
           for (let i = 0; i < typeArray.length - 1; i++) {
@@ -412,34 +385,70 @@
           inputDiv.appendChild(closeBtn);
           screenCover.appendChild(inputDiv);
           document.body.appendChild(screenCover);
-
           function savePokemon() {
+            screenCover.style.display = "none";
+            const newNameValue = newName.value;
+            const newTypeValue = newType.value;
+            const editedPokemon = pokemon;
+            editedPokemon.name = newNameValue;
+            editedPokemon.types[0].type.name = newTypeValue;
             if (
               favoritePokemonArray.includes(pokemon) &&
-              customPokemonArray.includes(pokemon)
+              customPokemonArray.includes(pokemon) &&
+              unique50Pokemon.includes(pokemon)
             ) {
-              console.log("favorite & custom");
+              const indexFavorite = favoritePokemonArray.indexOf(pokemon);
+              const indexCustom = customPokemonArray.indexOf(pokemon);
+              const indexUnique = unique50Pokemon.indexOf(pokemon);
+              favoritePokemonArray.splice(indexFavorite, 1, editedPokemon);
+              customPokemonArray.splice(indexCustom, 1, editedPokemon);
+              unique50Pokemon.splice(indexUnique, 1, editedPokemon);
+              localStorage.setItem(
+                "FavoritePokemon",
+                JSON.stringify(favoritePokemonArray)
+              );
+              localStorage.setItem(
+                "CustomPokemon",
+                JSON.stringify(customPokemonArray)
+              );
+              displayPokemonCards(unique50Pokemon);
+              displayFavoriteCards();
             } else if (
               favoritePokemonArray.includes(pokemon) &&
               unique50Pokemon.includes(pokemon)
             ) {
-              console.log("favorite & unique50");
+              const indexFavorite = favoritePokemonArray.indexOf(pokemon);
+              const indexUnique = unique50Pokemon.indexOf(pokemon);
+              favoritePokemonArray.splice(indexFavorite, 1, editedPokemon);
+              unique50Pokemon.splice(indexUnique, 1, editedPokemon);
+              localStorage.setItem(
+                "FavoritePokemon",
+                JSON.stringify(favoritePokemonArray)
+              );
+              displayPokemonCards(unique50Pokemon);
+              displayFavoriteCards();
             } else if (
               customPokemonArray.includes(pokemon) &&
               unique50Pokemon.includes(pokemon)
             ) {
-              console.log("custom & unique50");
-              /*               unique50Pokemon.splice()
-               */
-            } else if (favoritePokemonArray.includes(pokemon)) {
-              console.log("favorite");
-            } else {
-              console.log("unique50");
+              const indexCustom = customPokemonArray.indexOf(pokemon);
+              const indexUnique = unique50Pokemon.indexOf(pokemon);
+              customPokemonArray.splice(indexCustom, 1, editedPokemon);
+              unique50Pokemon.splice(indexUnique, 1, editedPokemon);
+              localStorage.setItem(
+                "CustomPokemon",
+                JSON.stringify(customPokemonArray)
+              );
+              displayPokemonCards(unique50Pokemon);
+            }
+            if (unique50Pokemon.includes(pokemon)) {
+              const index = unique50Pokemon.indexOf(pokemon);
+              unique50Pokemon.splice(index, 1, editedPokemon);
+              displayPokemonCards(unique50Pokemon);
             }
           }
         }
       }
-
       function addToLike(pokemon) {
         if (favoritePokemonArray.includes(pokemon)) {
           alert("Du har allerede lagret denne!");
@@ -456,22 +465,9 @@
           );
         }
       }
-
       function editCard(pokemon) {
         createInputField("Edit", pokemon);
-
-        /*  if (favoritePokemonArray.includes(pokemon)) {
-          const index = favoritePokemonArray.indexOf(pokemon);
-          favoritePokemonArray.splice(index, 1, editPokemon);
-
-          localStorage.setItem(
-            "FavoritePokemon",
-            JSON.stringify(favoritePokemonArray)
-          );
-          displayFavoriteCards();
-        } */
       }
-
       function deleteCard(pokemon, location) {
         if (location === "Favorite") {
           const index = favoritePokemonArray.indexOf(pokemon);
@@ -499,7 +495,6 @@
           }
         }
       }
-
       function displayFavoriteCards() {
         while (container3.firstChild) {
           container3.removeChild(container3.firstChild);
@@ -509,9 +504,7 @@
         } else {
           const favoriteGrid = document.createElement("div");
           container3.appendChild(favoriteGrid);
-
           favoriteGrid.className = "favorite-grid";
-
           for (let i = 0; i < favoritePokemonArray.length; i++) {
             const card = favoritePokemonArray[i];
             const pokemonCard = document.createElement("div");
@@ -520,36 +513,28 @@
             pokemonCard.style.backgroundColor = `${
               typeColorMap[card.types[0].type.name]
             }`;
-
             const cardId = document.createElement("p");
             pokemonCard.appendChild(cardId);
             cardId.textContent = `#${card.id}`;
-
             const cardImage = document.createElement("div");
             pokemonCard.appendChild(cardImage);
             cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
-
             const cardName = document.createElement("h2");
             pokemonCard.appendChild(cardName);
             cardName.textContent = `${card.name}`;
-
             const cardType = document.createElement("p");
             pokemonCard.appendChild(cardType);
             cardType.textContent = `Type: ${card.types[0].type.name}`;
-
             const cardDiv = document.createElement("div");
             pokemonCard.appendChild(cardDiv);
-
             const cardLike = document.createElement("h1");
             cardDiv.appendChild(cardLike);
             cardLike.textContent = "🤍";
             cardLike.addEventListener("click", () => addToLike(card));
-
             const cardEdit = document.createElement("h1");
             cardDiv.appendChild(cardEdit);
             cardEdit.textContent = "✎";
             cardEdit.addEventListener("click", () => editCard(card));
-
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
