@@ -375,8 +375,6 @@
               },
             ],
           };
-
-          console.log(`Navn: ${inputNameValue} Type: ${inputTypeValue}`);
           customPokemonArray.push(newPokemon);
           unique50Pokemon.push(newPokemon);
           localStorage.setItem(
@@ -388,7 +386,6 @@
       }
 
       function addToLike(pokemon) {
-        console.log(favoritePokemonArray);
         if (favoritePokemonArray.includes(pokemon)) {
           alert("Du har allerede lagret denne!");
         } else if (favoritePokemonArray.length <= 4) {
@@ -408,16 +405,28 @@
       function deleteCard(pokemon, location) {
         if (location === "Favorite") {
           const index = favoritePokemonArray.indexOf(pokemon);
-          console.log(favoritePokemonArray);
           favoritePokemonArray.splice(index, 1);
           localStorage.setItem(
             "FavoritePokemon",
             JSON.stringify(favoritePokemonArray)
           );
           displayFavoriteCards();
-          console.log(favoritePokemonArray);
         } else if (location === "Main") {
-          console.log("test2");
+          if (customPokemonArray.includes(pokemon)) {
+            const indexCustom = customPokemonArray.indexOf(pokemon);
+            customPokemonArray.splice(indexCustom, 1);
+            localStorage.setItem(
+              "CustomPokemon",
+              JSON.stringify(customPokemonArray)
+            );
+            const index = unique50Pokemon.indexOf(pokemon);
+            unique50Pokemon.splice(index, 1);
+            displayPokemonCards(unique50Pokemon);
+          } else {
+            const index = unique50Pokemon.indexOf(pokemon);
+            unique50Pokemon.splice(index, 1);
+            displayPokemonCards(unique50Pokemon);
+          }
         }
       }
 
