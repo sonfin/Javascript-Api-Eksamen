@@ -269,7 +269,9 @@
             const cardDelete = document.createElement("h1");
             cardDiv.appendChild(cardDelete);
             cardDelete.textContent = "❌";
-            cardDelete.addEventListener("click", () => deleteCard(card));
+            cardDelete.addEventListener("click", () =>
+              deleteCard(card, "Main")
+            );
           }
         }
       }
@@ -403,12 +405,28 @@
         }
       }
 
+      function deleteCard(pokemon, location) {
+        if (location === "Favorite") {
+          const index = favoritePokemonArray.indexOf(pokemon);
+          console.log(favoritePokemonArray);
+          favoritePokemonArray.splice(index, 1);
+          localStorage.setItem(
+            "FavoritePokemon",
+            JSON.stringify(favoritePokemonArray)
+          );
+          displayFavoriteCards();
+          console.log(favoritePokemonArray);
+        } else if (location === "Main") {
+          console.log("test2");
+        }
+      }
+
       function displayFavoriteCards() {
         while (container3.firstChild) {
           container3.removeChild(container3.firstChild);
         }
         if (favoritePokemonArray.length < 1) {
-          alert("Du har ingen favoritter lagret!");
+          alert("Du har ingen favoritter nå!");
         } else {
           const favoriteGrid = document.createElement("div");
           container3.appendChild(favoriteGrid);
