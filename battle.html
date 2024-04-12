@@ -79,6 +79,7 @@
       }
 
       challangerNavBtn.onclick = initializeAllPokemon();
+      winnersNavBtn.onclick = logWinners;
 
       async function getAllPokemons() {
         const pokemonRequest = await fetch(
@@ -401,6 +402,19 @@
           return damage;
         }
         diplayChallengerCards();
+      }
+
+      function logWinners() {
+        if (sessionStorage.length) {
+          const sessionWinners = JSON.parse(
+            sessionStorage.getItem("WinnerPokemon")
+          );
+          if (sessionWinners) {
+            for (pokemon of sessionWinners) {
+              console.log(pokemon.name);
+            }
+          }
+        }
       }
     </script>
   </body>
