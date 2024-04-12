@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/battle.css" />
+    <title>Battle | Eksamen</title>
+  </head>
+  <body>
+    <header>
+      <nav class="nav-bar">
+        <!-- http://www.rw-designer.com/cursor-detail/55503 -->
+        <button type="button" id="challanger-nav-btn">Utfordrere</button>
+        <h1><a href="./pokemon.html">Pokemon</a></h1>
+        <h1><a href="./battle.html">Battle</a></h1>
+        <button type="button" id="winners-nav-btn">Tidligere vinnere</button>
+      </nav>
+    </header>
+    <main>
+      <div class="container-1">
+        <div class="search-grid">
+          <div class="input-box">
+            <h3>Velg 3 pokemon til laget ditt!</h3>
+            <input type="text" id="search-input" placeholder="f.eks. Pikachu" />
+            <ul id="pokemon-list"></ul>
+            <input type="button" id="choose-btn" value="Legg til" />
+          </div>
+        </div>
+      </div>
+      <div class="container-2">
+        <div class="defender-grid"></div>
+        <div class="challenger-grid"></div>
+      </div>
+      <div class="container-3"></div>
+      <div class="winner-grid"></div>
+    </main>
+    <script>
+      const challangerNavBtn = document.querySelector("#challanger-nav-btn");
+      const winnersNavBtn = document.querySelector("#winners-nav-btn");
+      const searchGrid = document.querySelector(".search-grid");
+      const defenderGrid = document.querySelector(".defender-grid");
+      const challengerGrid = document.querySelector(".challenger-grid");
+      const winnerGrid = document.querySelector(".winner-grid");
+      const pokemonList = document.querySelector("#pokemon-list");
+      const searchInput = document.querySelector("#search-input");
+      const chooseBtn = document.querySelector("#choose-btn");
+      const inputBox = document.querySelector(".input-box");
+
+      const localFavorite = [];
+      const sessionWinners = [];
+      const favoritePokemonArray = [];
+      const winnerPokemonArray = [];
+      let allPokemonArray = [];
+      const challangerNameList = [];
+      const challangerList = [];
+      const uniqueNumber = [];
+      const defenderNameList = [];
+      const defenderList = [];
+      if (sessionStorage.length) {
+        const sessionWinners = JSON.parse(
+          sessionStorage.getItem("WinnerPokemon")
+        );
+        if (sessionWinners) {
+          for (pokemon of sessionWinners) {
+            winnerPokemonArray.push(pokemon);
+          }
+        }
+      }
+      if (localStorage.length) {
+        const localFavorite = JSON.parse(
+          localStorage.getItem("FavoritePokemon")
+        );
+        if (localFavorite) {
+          for (pokemon of localFavorite) {
+            favoritePokemonArray.push(pokemon);
+          }
+        }
+      }
+
+      challangerNavBtn.onclick = initializeAllPokemon();
+      winnersNavBtn.onclick = logWinners;
+
+      async function getAllPokemons() {
+        const pokemonRequest = await fetch(
+          "https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0"
+        );
+        const pokemonResult = await pokemonRequest.json();
+        return pokemonResult.results;
+      }
+      async function initializeAllPokemon() {
+        try {
+          allPokemonArray = await getAllPokemons();
+          uniquePokemon3();
+        } catch (error) {
+          console.error("Error med å laste innhold", error);
+        }
+      }
+
+      function uniquePokemon3() {
+        try {
+          while (uniqueNumber.length < 3) {
+            const randomNumber = Math.floor(
+              Math.random() * allPokemonArray.length
+            );
+            if (!uniqueNumber.includes(randomNumber)) {
+              uniqueNumber.push(randomNumber);
+              initializePokemon(randomNumber, "Defender");
+            }
+          }
+          getPokemonInfo();
+        } catch (error) {
+          console.error("Error med å generere unique pokemon", error);
+        }
+      }
+      function getPokemonInfo() {
+        uniqueNumber.forEach((number) => {
+          const pokemon = allPokemonArray[number];
+          defenderNameList.push(pokemon);
+        });
+      }
+      // Hjelp fra chatGpt med søkefelt
+      searchInput.addEventListener("input", function () {
+        const text = this.value;
+        findPokemon(text);
+      });
+
+      function findPokemon(text) {
+        pokemonList.innerHTML = "";
+        const searchResult = [];
+        for (let i = 0; i < allPokemonArray.length; i++) {
+          const pokemon = allPokemonArray[i];
+          if (pokemon.name.toLowerCase().includes(text.toLowerCase())) {
+            searchResult.push(pokemon);
+          }
+        }
+        searchResult.forEach((pokemon) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = pokemon.name;
+          pokemonList.appendChild(listItem);
+        });
+      }
+      searchInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          addToList();
+        }
+      });
+      chooseBtn.onclick = addToList;
+
+      function addToList() {
+        const pokemonName = searchInput.value.toLowerCase();
+        const pokemonIndex = allPokemonArray.findIndex(
+          (pokemon) => pokemon.name.toLowerCase() === pokemonName
+        );
+        if (challangerNameList.length < 3) {
+          challangerNameList.push(allPokemonArray[pokemonIndex]);
+          searchInput.value = "";
+          searchInput.focus;
+          initializePokemon(pokemonIndex, "Challanger");
+        }
+      }
+
+      async function initializePokemon(index, team) {
+        const url = allPokemonArray[index].url;
+        if (team === "Challanger") {
+          const response = await fetch(url);
+          const pokemonInfo = await response.json();
+          challangerList.push(pokemonInfo);
+          diplayChallengerCards();
+        } else if (team === "Defender") {
+          const response = await fetch(url);
+          const pokemonInfo = await response.json();
+          defenderList.push(pokemonInfo);
+          displayDefenderCards();
+        }
+        if (challangerList.length >= 3) {
+          inputBox.style.display = "none";
+        }
+      }
+      function displayDefenderCards() {
+        while (defenderGrid.firstChild) {
+          defenderGrid.removeChild(defenderGrid.firstChild);
+        }
+        const aliveDefenders = defenderList.filter(
+          (defender) => defender.stats[0].base_stat > 0
+        );
+        if (aliveDefenders.length === 0) {
+          const aliveChallenger = challangerList.filter(
+            (challenger) => challenger.stats[0].base_stat > 0
+          );
+          for (pokemon of aliveChallenger) {
+            winnerPokemonArray.push(pokemon);
+          }
+          sessionStorage.setItem(
+            "WinnerPokemon",
+            JSON.stringify(winnerPokemonArray)
+          );
+          alert("Gratulerer du har vunnet");
+        }
+        for (let i = 0; i < aliveDefenders.length; i++) {
+          const card = aliveDefenders[i];
+          const defenderCard = document.createElement("div");
+          defenderGrid.appendChild(defenderCard);
+          defenderCard.className = "card";
+          defenderCard.style.backgroundColor = "#8300ef";
+          defenderCard.id = `defender.id:${card.id}`;
+          const cardImage = document.createElement("div");
+          defenderCard.appendChild(cardImage);
+          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+          const cardName = document.createElement("h2");
+          defenderCard.appendChild(cardName);
+          cardName.textContent = `${card.name}`;
+          const cardType = document.createElement("p");
+          defenderCard.appendChild(cardType);
+          cardType.textContent = `Type: ${card.types[0].type.name}`;
+          const cardHp = document.createElement("p");
+          defenderCard.appendChild(cardHp);
+          cardHp.textContent = `${card.stats[0].stat.name}: ${card.stats[0].base_stat}`;
+          const cardAttack = document.createElement("p");
+          defenderCard.appendChild(cardAttack);
+          cardAttack.textContent = `${card.stats[1].stat.name}: ${card.stats[1].base_stat}`;
+          const cardDefence = document.createElement("p");
+          defenderCard.appendChild(cardDefence);
+          cardDefence.textContent = `${card.stats[2].stat.name}: ${card.stats[2].base_stat}`;
+          const cardDiv = document.createElement("div");
+          defenderCard.appendChild(cardDiv);
+        }
+      }
+      function diplayChallengerCards() {
+        while (challengerGrid.firstChild) {
+          challengerGrid.removeChild(challengerGrid.firstChild);
+        }
+        const aliveChallenger = challangerList.filter(
+          (challenger) => challenger.stats[0].base_stat > 0
+        );
+        if (aliveChallenger.length === 0) {
+          const aliveDefenders = defenderList.filter(
+            (defender) => defender.stats[0].base_stat > 0
+          );
+          for (pokemon of aliveDefenders) {
+            winnerPokemonArray.push(pokemon);
+          }
+          sessionStorage.setItem(
+            "WinnerPokemon",
+            JSON.stringify(winnerPokemonArray)
+          );
+          alert("Du tapte dessverre spillet, prøv igjen!");
+        }
+        for (let i = 0; i < aliveChallenger.length; i++) {
+          const card = aliveChallenger[i];
+          const challengerCard = document.createElement("div");
+          challengerGrid.appendChild(challengerCard);
+          challengerCard.className = "card";
+          challengerCard.style.backgroundColor = "#00e5ca";
+          const cardImage = document.createElement("div");
+          challengerCard.appendChild(cardImage);
+          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+          const cardName = document.createElement("h2");
+          challengerCard.appendChild(cardName);
+          cardName.textContent = `${card.name}`;
+          const cardType = document.createElement("p");
+          challengerCard.appendChild(cardType);
+          cardType.textContent = `Type: ${card.types[0].type.name}`;
+          const cardHp = document.createElement("p");
+          challengerCard.appendChild(cardHp);
+          cardHp.textContent = `${card.stats[0].stat.name}: ${card.stats[0].base_stat}`;
+          const cardAttack = document.createElement("p");
+          challengerCard.appendChild(cardAttack);
+          cardAttack.textContent = `${card.stats[1].stat.name}: ${card.stats[1].base_stat}`;
+          const cardDefence = document.createElement("p");
+          challengerCard.appendChild(cardDefence);
+          cardDefence.textContent = `${card.stats[2].stat.name}: ${card.stats[2].base_stat}`;
+          const cardDiv = document.createElement("div");
+          challengerCard.appendChild(cardDiv);
+          const cardAction = document.createElement("h1");
+          cardDiv.appendChild(cardAction);
+          cardAction.textContent = "⚔️";
+          cardAction.addEventListener("click", () => useAttack(card));
+        }
+      }
+
+      function useAttack(pokemon) {
+        const aliveDefenders = defenderList.filter(
+          (defender) => defender.stats[0].base_stat > 0
+        );
+        if (aliveDefenders.length > 2) {
+          const defenderThree = document.getElementById(
+            `defender.id:${aliveDefenders[2].id}`
+          );
+          const defenderThreeClickHandler = () =>
+            recieveAttack(aliveDefenders[2], pokemon);
+          defenderThree.addEventListener("click", defenderThreeClickHandler);
+        }
+        if (aliveDefenders.length > 1) {
+          const defenderTwo = document.getElementById(
+            `defender.id:${aliveDefenders[1].id}`
+          );
+          const defenderTwoClickHandler = () =>
+            recieveAttack(aliveDefenders[1], pokemon);
+          defenderTwo.addEventListener("click", defenderTwoClickHandler);
+        }
+        if (aliveDefenders.length > 0) {
+          const defenderOneClickHandler = () =>
+            recieveAttack(aliveDefenders[0], pokemon);
+          const defenderOne = document.getElementById(
+            `defender.id:${aliveDefenders[0].id}`
+          );
+          defenderOne.addEventListener("click", defenderOneClickHandler);
+        }
+
+        function recieveAttack(defender, attacker) {
+          const defenderOneClickHandler = () =>
+            recieveAttack(defenderList[0], pokemon);
+          const defenderTwoClickHandler = () =>
+            recieveAttack(defenderList[1], pokemon);
+          const defenderThreeClickHandler = () =>
+            recieveAttack(defenderList[2], pokemon);
+          const aliveDefenders = defenderList.filter(
+            (defender) => defender.stats[0].base_stat > 0
+          );
+          if (aliveDefenders.length > 2) {
+            const defenderThree = document.getElementById(
+              `defender.id:${aliveDefenders[2].id}`
+            );
+            defenderThree.removeEventListener(
+              "click",
+              defenderThreeClickHandler
+            );
+          }
+          if (aliveDefenders.length > 1) {
+            const defenderTwo = document.getElementById(
+              `defender.id:${aliveDefenders[1].id}`
+            );
+            defenderTwo.removeEventListener("click", defenderTwoClickHandler);
+          }
+          if (aliveDefenders.length > 0) {
+            const defenderOne = document.getElementById(
+              `defender.id:${aliveDefenders[0].id}`
+            );
+            defenderOne.removeEventListener("click", defenderOneClickHandler);
+          }
+
+          const defenderLoss = actualDamage(defender, attacker);
+          defender.stats[0].base_stat -= defenderLoss;
+          console.log(
+            attacker.name,
+            "gjorde",
+            defenderLoss,
+            "skade på",
+            defender.name
+          );
+          displayDefenderCards();
+          setTimeout(() => {
+            counterAttack();
+          }, 1500);
+        }
+        function actualDamage(defender, attacker) {
+          const attackDmg = attacker.stats[1].base_stat;
+          const defenceDfc = defender.stats[2].base_stat;
+          const baseDamage = Math.floor(Math.random() * 50) + 50;
+          const damage = Math.floor((attackDmg / defenceDfc) * baseDamage);
+          return damage;
+        }
+      }
+      function counterAttack() {
+        const aliveAttacker = defenderList.filter(
+          (attacker) => attacker.stats[0].base_stat > 0
+        );
+        const aliveDefender = challangerList.filter(
+          (defender) => defender.stats[0].base_stat > 0
+        );
+        if (aliveAttacker.length > 0) {
+          const randomAttacker = Math.floor(
+            Math.random() * aliveAttacker.length
+          );
+          const randomDefender = Math.floor(
+            Math.random() * aliveDefender.length
+          );
+          deliverAttack(
+            aliveAttacker[randomAttacker],
+            aliveDefender[randomDefender]
+          );
+        }
+      }
+      function deliverAttack(attacker, defender) {
+        const defenderLoss = actualDamage(defender, attacker);
+        defender.stats[0].base_stat -= defenderLoss;
+        console.log(
+          attacker.name,
+          "gjorde",
+          defenderLoss,
+          "skade på",
+          defender.name
+        );
+        function actualDamage(defender, attacker) {
+          const attackDmg = attacker.stats[1].base_stat;
+          const defenceDfc = defender.stats[2].base_stat;
+
+          const baseDamage = Math.floor(Math.random() * 50) + 50;
+          const damage = Math.floor((attackDmg / defenceDfc) * baseDamage);
+
+          return damage;
+        }
+        diplayChallengerCards();
+      }
+
+      function logWinners() {
+        if (sessionStorage.length) {
+          const sessionWinners = JSON.parse(
+            sessionStorage.getItem("WinnerPokemon")
+          );
+          if (sessionWinners) {
+            for (pokemon of sessionWinners) {
+              console.log(pokemon.name);
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
