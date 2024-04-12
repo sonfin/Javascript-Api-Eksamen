@@ -47,13 +47,26 @@
       const inputBox = document.querySelector(".input-box");
 
       const localFavorite = [];
+      const sessionWinners = [];
       const favoritePokemonArray = [];
+      const winnerPokemonArray = [];
       let allPokemonArray = [];
       const challangerNameList = [];
       const challangerList = [];
       const uniqueNumber = [];
       const defenderNameList = [];
       const defenderList = [];
+      if (sessionStorage.length) {
+        const sessionWinners = JSON.parse(
+          sessionStorage.getItem("WinnerPokemon")
+        );
+        if (sessionWinners) {
+          for (pokemon of sessionWinners) {
+            winnerPokemonArray.push(pokemon);
+          }
+          console.log(sessionWinners);
+        }
+      }
       if (localStorage.length) {
         const localFavorite = JSON.parse(
           localStorage.getItem("FavoritePokemon")
@@ -171,6 +184,16 @@
           (defender) => defender.stats[0].base_stat > 0
         );
         if (aliveDefenders.length === 0) {
+          const aliveChallenger = challangerList.filter(
+            (challenger) => challenger.stats[0].base_stat > 0
+          );
+          for (pokemon of aliveChallenger) {
+            winnerPokemonArray.push(pokemon);
+          }
+          sessionStorage.setItem(
+            "WinnerPokemon",
+            JSON.stringify(winnerPokemonArray)
+          );
           alert("Gratulerer du har vunnet");
         }
         for (let i = 0; i < aliveDefenders.length; i++) {
@@ -210,6 +233,16 @@
           (challenger) => challenger.stats[0].base_stat > 0
         );
         if (aliveChallenger.length === 0) {
+          const aliveDefenders = defenderList.filter(
+            (defender) => defender.stats[0].base_stat > 0
+          );
+          for (pokemon of aliveDefenders) {
+            winnerPokemonArray.push(pokemon);
+          }
+          sessionStorage.setItem(
+            "WinnerPokemon",
+            JSON.stringify(winnerPokemonArray)
+          );
           alert("Du tapte dessverre spillet, prøv igjen!");
         }
         for (let i = 0; i < aliveChallenger.length; i++) {
