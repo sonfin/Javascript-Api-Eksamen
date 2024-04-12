@@ -167,38 +167,35 @@
         while (defenderGrid.firstChild) {
           defenderGrid.removeChild(defenderGrid.firstChild);
         }
-        for (let i = 0; i < defenderList.length; i++) {
-          const card = defenderList[i];
+        const aliveDefenders = defenderList.filter(
+          (defender) => defender.stats[0].base_stat > 0
+        );
+
+        for (let i = 0; i < aliveDefenders.length; i++) {
+          const card = aliveDefenders[i];
           const defenderCard = document.createElement("div");
           defenderGrid.appendChild(defenderCard);
           defenderCard.className = "card";
           defenderCard.style.backgroundColor = "#8300ef";
           defenderCard.id = `defender.id:${card.id}`;
-
           const cardImage = document.createElement("div");
           defenderCard.appendChild(cardImage);
           cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
-
           const cardName = document.createElement("h2");
           defenderCard.appendChild(cardName);
           cardName.textContent = `${card.name}`;
-
           const cardType = document.createElement("p");
           defenderCard.appendChild(cardType);
           cardType.textContent = `Type: ${card.types[0].type.name}`;
-
           const cardHp = document.createElement("p");
           defenderCard.appendChild(cardHp);
           cardHp.textContent = `${card.stats[0].stat.name}: ${card.stats[0].base_stat}`;
-
           const cardAttack = document.createElement("p");
           defenderCard.appendChild(cardAttack);
           cardAttack.textContent = `${card.stats[1].stat.name}: ${card.stats[1].base_stat}`;
-
           const cardDefence = document.createElement("p");
           defenderCard.appendChild(cardDefence);
           cardDefence.textContent = `${card.stats[2].stat.name}: ${card.stats[2].base_stat}`;
-
           const cardDiv = document.createElement("div");
           defenderCard.appendChild(cardDiv);
         }
@@ -264,12 +261,28 @@
         defenderTwo.addEventListener("click", defenderTwoClickHandler);
         defenderThree.addEventListener("click", defenderThreeClickHandler);
 
-        console.log("test", pokemon);
         function recieveAttack(defender, attacker) {
           defenderOne.removeEventListener("click", defenderOneClickHandler);
           defenderTwo.removeEventListener("click", defenderTwoClickHandler);
           defenderThree.removeEventListener("click", defenderThreeClickHandler);
+
+          const defenderLoss = actualDamage(defender, attacker);
+          defender.stats[0].base_stat -= defenderLoss;
+          console.log(defenderLoss);
+          console.log(defender.stats[0].base_stat);
           console.log("Defender:", defender.name, "Attacker:", attacker.name);
+          displayDefenderCards();
+        }
+        function actualDamage(defender, attacker) {
+          const attackDmg = attacker.stats[1].base_stat;
+          console.log(attackDmg);
+          const defenceDfc = defender.stats[2].base_stat;
+          console.log(defenceDfc);
+
+          const baseDamage = Math.floor(Math.random() * 50) + 50;
+          const damage = Math.floor((attackDmg / defenceDfc) * baseDamage);
+
+          return damage;
         }
       }
     </script>
