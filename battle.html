@@ -294,14 +294,12 @@
             );
           }
           if (aliveDefenders.length > 1) {
-            console.log(aliveDefenders);
             const defenderTwo = document.getElementById(
               `defender.id:${aliveDefenders[1].id}`
             );
             defenderTwo.removeEventListener("click", defenderTwoClickHandler);
           }
           if (aliveDefenders.length > 0) {
-            console.log(aliveDefenders);
             const defenderOne = document.getElementById(
               `defender.id:${aliveDefenders[0].id}`
             );
@@ -318,19 +316,15 @@
             defender.name
           );
           displayDefenderCards();
-          if (aliveDefenders.length > 0) {
-            setTimeout(() => {
-              counterAttack();
-            }, 1500);
-          }
+          setTimeout(() => {
+            counterAttack();
+          }, 1500);
         }
         function actualDamage(defender, attacker) {
           const attackDmg = attacker.stats[1].base_stat;
           const defenceDfc = defender.stats[2].base_stat;
-
           const baseDamage = Math.floor(Math.random() * 50) + 50;
           const damage = Math.floor((attackDmg / defenceDfc) * baseDamage);
-
           return damage;
         }
       }
@@ -341,15 +335,18 @@
         const aliveDefender = challangerList.filter(
           (defender) => defender.stats[0].base_stat > 0
         );
-        const randomAttacker = Math.floor(Math.random() * aliveAttacker.length);
-        const randomDefender = Math.floor(Math.random() * aliveDefender.length);
-
-        console.log(aliveAttacker[randomAttacker].name);
-        console.log(aliveDefender[randomDefender].name);
-        deliverAttack(
-          aliveAttacker[randomAttacker],
-          aliveDefender[randomDefender]
-        );
+        if (aliveAttacker.length > 0) {
+          const randomAttacker = Math.floor(
+            Math.random() * aliveAttacker.length
+          );
+          const randomDefender = Math.floor(
+            Math.random() * aliveDefender.length
+          );
+          deliverAttack(
+            aliveAttacker[randomAttacker],
+            aliveDefender[randomDefender]
+          );
+        }
       }
       function deliverAttack(attacker, defender) {
         const defenderLoss = actualDamage(defender, attacker);
