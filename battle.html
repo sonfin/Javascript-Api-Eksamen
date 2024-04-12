@@ -51,6 +51,9 @@
       let allPokemonArray = [];
       const challangerNameList = [];
       const challangerList = [];
+      const uniqueNumber = [];
+      const defenderNameList = [];
+      const defenderList = [];
       if (localStorage.length) {
         const localFavorite = JSON.parse(
           localStorage.getItem("FavoritePokemon")
@@ -75,11 +78,35 @@
         try {
           allPokemonArray = await getAllPokemons();
           console.log(allPokemonArray);
+          uniquePokemon3();
         } catch (error) {
           console.error("Error med å laste innhold", error);
         }
       }
 
+      function uniquePokemon3() {
+        try {
+          while (uniqueNumber.length < 3) {
+            const randomNumber = Math.floor(
+              Math.random() * allPokemonArray.length
+            );
+            if (!uniqueNumber.includes(randomNumber)) {
+              uniqueNumber.push(randomNumber);
+              console.log("test");
+              initializePokemon(randomNumber, "Defender");
+            }
+          }
+          getPokemonInfo();
+        } catch (error) {
+          console.error("Error med å generere unique pokemon", error);
+        }
+      }
+      function getPokemonInfo() {
+        uniqueNumber.forEach((number) => {
+          const pokemon = allPokemonArray[number];
+          defenderNameList.push(pokemon);
+        });
+      }
       // Hjelp fra chatGpt med søkefelt
       searchInput.addEventListener("input", function () {
         const text = this.value;
@@ -88,7 +115,6 @@
 
       function findPokemon(text) {
         pokemonList.innerHTML = "";
-
         const searchResult = [];
         for (let i = 0; i < allPokemonArray.length; i++) {
           const pokemon = allPokemonArray[i];
@@ -96,7 +122,6 @@
             searchResult.push(pokemon);
           }
         }
-
         searchResult.forEach((pokemon) => {
           const listItem = document.createElement("li");
           listItem.textContent = pokemon.name;
@@ -115,12 +140,10 @@
         const pokemonIndex = allPokemonArray.findIndex(
           (pokemon) => pokemon.name.toLowerCase() === pokemonName
         );
-
         if (challangerNameList.length < 3) {
           challangerNameList.push(allPokemonArray[pokemonIndex]);
           searchInput.value = "";
           searchInput.focus;
-
           initializePokemon(pokemonIndex, "Challanger");
         } else if (challangerNameList.length >= 3) {
           console.log("Maks 3!");
@@ -131,6 +154,8 @@
 
       async function initializePokemon(index, team) {
         const url = allPokemonArray[index].url;
+        console.log(url);
+        console.log(index, team);
         if (team === "Challanger") {
           const response = await fetch(url);
           const pokemonInfo = await response.json();
@@ -139,9 +164,64 @@
         } else if (team === "Defender") {
           const response = await fetch(url);
           const pokemonInfo = await response.json();
+          defenderList.push(pokemonInfo);
+          displayDefenderCards();
         }
         if (challangerList.length >= 3) {
           inputBox.style.display = "none";
+        }
+      }
+      function displayDefenderCards() {
+        while (defenderGrid.firstChild) {
+          defenderGrid.removeChild(defenderGrid.firstChild);
+        }
+        for (let i = 0; i < defenderList.length; i++) {
+          const card = defenderList[i];
+          const defenderCard = document.createElement("div");
+          defenderGrid.appendChild(defenderCard);
+          defenderCard.className = "card";
+
+          const cardImage = document.createElement("div");
+          defenderCard.appendChild(cardImage);
+          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+
+          const cardName = document.createElement("h2");
+          defenderCard.appendChild(cardName);
+          cardName.textContent = `${card.name}`;
+
+          const cardType = document.createElement("p");
+          defenderCard.appendChild(cardType);
+          cardType.textContent = `Type: ${card.types[0].type.name}`;
+
+          const cardHp = document.createElement("p");
+          defenderCard.appendChild(cardHp);
+          cardHp.textContent = `${card.stats[0].stat.name}: ${card.stats[0].base_stat}`;
+
+          const cardAttack = document.createElement("p");
+          defenderCard.appendChild(cardAttack);
+          cardAttack.textContent = `${card.stats[1].stat.name}: ${card.stats[1].base_stat}`;
+
+          const cardDefence = document.createElement("p");
+          defenderCard.appendChild(cardDefence);
+          cardDefence.textContent = `${card.stats[2].stat.name}: ${card.stats[2].base_stat}`;
+
+          const cardDiv = document.createElement("div");
+          defenderCard.appendChild(cardDiv);
+
+          const cardLike = document.createElement("h1");
+          cardDiv.appendChild(cardLike);
+          cardLike.textContent = "🤍";
+          cardLike.addEventListener("click", () => addToLike(card));
+
+          const cardEdit = document.createElement("h1");
+          cardDiv.appendChild(cardEdit);
+          cardEdit.textContent = "✎";
+          cardEdit.addEventListener("click", () => editCard(card));
+
+          const cardDelete = document.createElement("h1");
+          cardDiv.appendChild(cardDelete);
+          cardDelete.textContent = "❌";
+          cardDelete.addEventListener("click", () => deleteCard(card, "Main"));
         }
       }
       function diplayChallengerCards() {
