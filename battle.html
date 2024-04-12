@@ -318,9 +318,11 @@
             defender.name
           );
           displayDefenderCards();
-          setTimeout(() => {
-            counterAttack();
-          }, 1500);
+          if (aliveDefenders.length > 0) {
+            setTimeout(() => {
+              counterAttack();
+            }, 1500);
+          }
         }
         function actualDamage(defender, attacker) {
           const attackDmg = attacker.stats[1].base_stat;
@@ -340,9 +342,35 @@
           (defender) => defender.stats[0].base_stat > 0
         );
         const randomAttacker = Math.floor(Math.random() * aliveAttacker.length);
+        const randomDefender = Math.floor(Math.random() * aliveDefender.length);
 
-        console.log(aliveAttacker);
-        console.log(aliveDefender);
+        console.log(aliveAttacker[randomAttacker].name);
+        console.log(aliveDefender[randomDefender].name);
+        deliverAttack(
+          aliveAttacker[randomAttacker],
+          aliveDefender[randomDefender]
+        );
+      }
+      function deliverAttack(attacker, defender) {
+        const defenderLoss = actualDamage(defender, attacker);
+        defender.stats[0].base_stat -= defenderLoss;
+        console.log(
+          attacker.name,
+          "gjorde",
+          defenderLoss,
+          "skade på",
+          defender.name
+        );
+        function actualDamage(defender, attacker) {
+          const attackDmg = attacker.stats[1].base_stat;
+          const defenceDfc = defender.stats[2].base_stat;
+
+          const baseDamage = Math.floor(Math.random() * 50) + 50;
+          const damage = Math.floor((attackDmg / defenceDfc) * baseDamage);
+
+          return damage;
+        }
+        diplayChallengerCards();
       }
     </script>
   </body>
