@@ -20,7 +20,7 @@
       <div class="container-1">
         <div class="search-grid">
           <div class="input-box">
-            <h3>Søk etter Pokemon</h3>
+            <h3>Velg 3 pokemon til laget ditt!</h3>
             <input type="text" id="search-input" placeholder="f.eks. Pikachu" />
             <ul id="pokemon-list"></ul>
             <input type="button" id="choose-btn" value="Legg til" />
@@ -42,10 +42,12 @@
       const pokemonList = document.querySelector("#pokemon-list");
       const searchInput = document.querySelector("#search-input");
       const chooseBtn = document.querySelector("#choose-btn");
+      const inputBox = document.querySelector(".input-box");
 
       const localFavorite = [];
       const favoritePokemonArray = [];
       let allPokemonArray = [];
+      const challangerNameList = [];
       const challangerList = [];
       if (localStorage.length) {
         const localFavorite = JSON.parse(
@@ -108,20 +110,35 @@
 
       function addToList() {
         const pokemonName = searchInput.value.toLowerCase();
-        const pokemonIndex = allPokemonArray.name.indexOf(pokemonName);
-        console.log(pokemonName);
-        console.log(pokemonIndex);
-        /* const pokemon = allPokemonArray.find(
+        const pokemonIndex = allPokemonArray.findIndex(
           (pokemon) => pokemon.name.toLowerCase() === pokemonName
-        ); */
+        );
 
-        if (challangerList < 3 && !challangerList.includes(pokemon)) {
-          challangerList.push(pokemon);
-          console.log(challangerList);
-        } else if (challangerList.length >= 3) {
+        if (challangerNameList.length < 3) {
+          challangerNameList.push(allPokemonArray[pokemonIndex]);
+          searchInput.value = "";
+          searchInput.focus;
+
+          initializePokemon(pokemonIndex, "Challanger");
+        } else if (challangerNameList.length >= 3) {
           console.log("Maks 3!");
         } else {
           console.log("Finner ikke pokemonen du leter etter.");
+        }
+      }
+
+      async function initializePokemon(index, team) {
+        const url = allPokemonArray[index].url;
+        if (team === "Challanger") {
+          const response = await fetch(url);
+          const pokemonInfo = await response.json();
+          challangerList.push(pokemonInfo);
+        } else if (team === "Defender") {
+          const response = await fetch(url);
+          const pokemonInfo = await response.json();
+        }
+        if (challangerList.length >= 3) {
+          inputBox.style.display = "none";
         }
       }
     </script>
