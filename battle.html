@@ -28,7 +28,8 @@
         </div>
       </div>
       <div class="container-2">
-        <div class="battle-grid"></div>
+        <div class="defender-grid"></div>
+        <div class="challenger-grid"></div>
       </div>
       <div class="container-3"></div>
       <div class="winner-grid"></div>
@@ -37,7 +38,8 @@
       const challangerNavBtn = document.querySelector("#challanger-nav-btn");
       const winnersNavBtn = document.querySelector("#winners-nav-btn");
       const searchGrid = document.querySelector(".search-grid");
-      const battleGrid = document.querySelector(".battle-grid");
+      const defenderGrid = document.querySelector(".defender-grid");
+      const challengerGrid = document.querySelector(".challenger-grid");
       const winnerGrid = document.querySelector(".winner-grid");
       const pokemonList = document.querySelector("#pokemon-list");
       const searchInput = document.querySelector("#search-input");
@@ -133,12 +135,66 @@
           const response = await fetch(url);
           const pokemonInfo = await response.json();
           challangerList.push(pokemonInfo);
+          diplayChallengerCards();
         } else if (team === "Defender") {
           const response = await fetch(url);
           const pokemonInfo = await response.json();
         }
         if (challangerList.length >= 3) {
           inputBox.style.display = "none";
+        }
+      }
+      function diplayChallengerCards() {
+        while (challengerGrid.firstChild) {
+          challengerGrid.removeChild(challengerGrid.firstChild);
+        }
+        for (let i = 0; i < challangerList.length; i++) {
+          const card = challangerList[i];
+          const challengerCard = document.createElement("div");
+          challengerGrid.appendChild(challengerCard);
+          challengerCard.className = "card";
+
+          const cardImage = document.createElement("div");
+          challengerCard.appendChild(cardImage);
+          cardImage.innerHTML = `<img src="${card.sprites.front_default}" alt="${card.name}(en Pokemon)" />`;
+
+          const cardName = document.createElement("h2");
+          challengerCard.appendChild(cardName);
+          cardName.textContent = `${card.name}`;
+
+          const cardType = document.createElement("p");
+          challengerCard.appendChild(cardType);
+          cardType.textContent = `Type: ${card.types[0].type.name}`;
+
+          const cardHp = document.createElement("p");
+          challengerCard.appendChild(cardHp);
+          cardHp.textContent = `${card.stats[0].stat.name}: ${card.stats[0].base_stat}`;
+
+          const cardAttack = document.createElement("p");
+          challengerCard.appendChild(cardAttack);
+          cardAttack.textContent = `${card.stats[1].stat.name}: ${card.stats[1].base_stat}`;
+
+          const cardDefence = document.createElement("p");
+          challengerCard.appendChild(cardDefence);
+          cardDefence.textContent = `${card.stats[2].stat.name}: ${card.stats[2].base_stat}`;
+
+          const cardDiv = document.createElement("div");
+          challengerCard.appendChild(cardDiv);
+
+          const cardLike = document.createElement("h1");
+          cardDiv.appendChild(cardLike);
+          cardLike.textContent = "🤍";
+          cardLike.addEventListener("click", () => addToLike(card));
+
+          const cardEdit = document.createElement("h1");
+          cardDiv.appendChild(cardEdit);
+          cardEdit.textContent = "✎";
+          cardEdit.addEventListener("click", () => editCard(card));
+
+          const cardDelete = document.createElement("h1");
+          cardDiv.appendChild(cardDelete);
+          cardDelete.textContent = "❌";
+          cardDelete.addEventListener("click", () => deleteCard(card, "Main"));
         }
       }
     </script>
